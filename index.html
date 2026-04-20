@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hetzner Guide — farhan.app</title>
+<meta name="author" content="farhan.app" />
+<meta name="description" content="A complete, beginner-friendly guide to Hetzner Cloud hosting — server setup, Cloudflare DNS, WordPress, and CloudPanel. Built by Farhan — farhan.app" />
+<link rel="icon" type="image/svg+xml" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%230a0a0a"/><text x="32" y="45" font-family="Inter,system-ui,-apple-system,sans-serif" font-size="38" font-weight="800" text-anchor="middle" fill="white">H</text></svg>' />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Hetzner Guide" />
+<meta property="og:title" content="Hetzner Guide — farhan.app" />
+<meta property="og:description" content="A complete, beginner-friendly guide to Hetzner Cloud hosting — with Cloudflare DNS, WordPress, and CloudPanel." />
+<meta property="og:url" content="https://hetzner-guide.farhan.app" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Hetzner Guide — farhan.app" />
+<meta name="twitter:description" content="A complete, beginner-friendly guide to Hetzner Cloud hosting. Built by Farhan — farhan.app" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ── shadcn/ui inspired design system ── */
+  :root {
+    /* Light (default) — zinc palette */
+    --background: hsl(0 0% 100%);
+    --foreground: hsl(240 10% 3.9%);
+    --muted: hsl(240 4.8% 95.9%);
+    --muted-foreground: hsl(240 3.8% 46.1%);
+    --popover: hsl(0 0% 100%);
+    --card: hsl(0 0% 100%);
+    --border: hsl(240 5.9% 90%);
+    --input: hsl(240 5.9% 90%);
+    --primary: hsl(240 5.9% 10%);
+    --primary-foreground: hsl(0 0% 98%);
+    --secondary: hsl(240 4.8% 95.9%);
+    --accent: hsl(240 4.8% 95.9%);
+    --accent-foreground: hsl(240 5.9% 10%);
+    --ring: hsl(240 5.9% 10%);
+    --radius: 0.5rem;
+
+    /* Callout tints */
+    --info-bg: hsl(214 100% 97%);
+    --info-border: hsl(214 95% 93%);
+    --info-fg: hsl(221 83% 33%);
+    --warn-bg: hsl(48 100% 96%);
+    --warn-border: hsl(48 96% 89%);
+    --warn-fg: hsl(25 75% 31%);
+    --danger-bg: hsl(0 86% 97%);
+    --danger-border: hsl(0 93% 94%);
+    --danger-fg: hsl(0 74% 42%);
+    --success-bg: hsl(143 85% 96%);
+    --success-border: hsl(145 80% 87%);
+    --success-fg: hsl(140 85% 22%);
+
+    --toc-width: 256px;
+    --header-h: 56px;
+    --right-width: 220px;
+    --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  [data-theme="dark"] {
+    --background: hsl(240 10% 3.9%);
+    --foreground: hsl(0 0% 98%);
+    --muted: hsl(240 3.7% 15.9%);
+    --muted-foreground: hsl(240 5% 64.9%);
+    --popover: hsl(240 10% 3.9%);
+    --card: hsl(240 10% 3.9%);
+    --border: hsl(240 3.7% 15.9%);
+    --input: hsl(240 3.7% 15.9%);
+    --primary: hsl(0 0% 98%);
+    --primary-foreground: hsl(240 5.9% 10%);
+    --secondary: hsl(240 3.7% 15.9%);
+    --accent: hsl(240 3.7% 15.9%);
+    --accent-foreground: hsl(0 0% 98%);
+    --ring: hsl(240 4.9% 83.9%);
+
+    --info-bg: hsl(217 33% 12%);
+    --info-border: hsl(217 33% 20%);
+    --info-fg: hsl(213 94% 78%);
+    --warn-bg: hsl(35 60% 10%);
+    --warn-border: hsl(35 60% 20%);
+    --warn-fg: hsl(48 96% 76%);
+    --danger-bg: hsl(0 63% 12%);
+    --danger-border: hsl(0 63% 22%);
+    --danger-fg: hsl(0 91% 78%);
+    --success-bg: hsl(140 50% 9%);
+    --success-border: hsl(140 50% 18%);
+    --success-fg: hsl(142 71% 75%);
+  }
+  html { color-scheme: light; }
+  html[data-theme="dark"] { color-scheme: dark; }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; min-width: 0; }
+  html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 24px); overflow-x: hidden; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--background);
+    color: var(--foreground);
+    line-height: 1.7;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "cv11", "ss01";
+    overflow-x: hidden;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+  img, svg, video { max-width: 100%; height: auto; }
+  ::selection { background: var(--primary); color: var(--primary-foreground); }
+
+  /* ── Header ── */
+  .site-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+    width: 100%; max-width: 100vw;
+    height: var(--header-h);
+    background: color-mix(in srgb, var(--background) 85%, transparent);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 24px; gap: 24px;
+    box-sizing: border-box;
+  }
+  .site-header .logo { font-weight: 600; font-size: 14px; color: var(--foreground); letter-spacing: -.01em; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+  .site-header .logo-mark { width: 22px; height: 22px; border-radius: 6px; background: var(--primary); color: var(--primary-foreground); display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; }
+  .site-header .logo span { color: var(--foreground); font-weight: 600; }
+  .site-header nav.top-nav { display: flex; gap: 22px; font-size: 13.5px; }
+  .site-header nav.top-nav a { color: var(--muted-foreground); text-decoration: none; font-weight: 400; transition: color .15s; }
+  .site-header nav.top-nav a:hover, .site-header nav.top-nav a.active { color: var(--foreground); }
+  .site-header nav.top-nav a.active { font-weight: 500; }
+  .header-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .support-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 32px; padding: 0 12px;
+    border-radius: calc(var(--radius) - 2px);
+    background: var(--primary); color: var(--primary-foreground);
+    font-size: 13px; font-weight: 500; text-decoration: none;
+    transition: opacity .15s;
+  }
+  .support-btn:hover { opacity: .9; text-decoration: none; }
+  .search-stub { background: var(--muted); border: 1px solid var(--border); color: var(--muted-foreground); border-radius: calc(var(--radius) - 2px); padding: 5px 10px; font-size: 13px; display: inline-flex; align-items: center; gap: 40px; min-width: 200px; height: 32px; }
+  .search-stub .kbd { font-family: var(--font-mono); font-size: 10px; border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; background: var(--background); color: var(--muted-foreground); line-height: 16px; }
+  .icon-btn { background: transparent; border: 0; color: var(--muted-foreground); width: 32px; height: 32px; border-radius: calc(var(--radius) - 2px); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: background .15s, color .15s; text-decoration: none; font-size: 15px; }
+  .icon-btn:hover { background: var(--muted); color: var(--foreground); }
+  .site-header .subtitle { display: none; }
+
+  .theme-toggle, .hamburger {
+    background: transparent; border: 0; color: var(--muted-foreground);
+    width: 32px; height: 32px; border-radius: calc(var(--radius) - 2px);
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 15px; transition: background .15s, color .15s;
+  }
+  .theme-toggle:hover, .hamburger:hover { background: var(--muted); color: var(--foreground); }
+  .hamburger { display: none; font-size: 18px; }
+  .theme-toggle .sun { display: none; }
+  .theme-toggle .moon { display: inline; }
+  [data-theme="dark"] .theme-toggle .sun { display: inline; }
+  [data-theme="dark"] .theme-toggle .moon { display: none; }
+
+  /* ── Layout ── */
+  .layout { display: flex; margin-top: var(--header-h); min-height: calc(100vh - var(--header-h)); max-width: 1400px; margin-left: auto; margin-right: auto; }
+
+  .sidebar {
+    width: var(--toc-width); min-width: var(--toc-width);
+    position: fixed; top: var(--header-h); bottom: 0; left: max(24px, calc((100vw - 1400px) / 2 + 24px));
+    overflow-y: auto; padding: 28px 16px 40px 0;
+    background: var(--background);
+    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  .toc-group { margin-bottom: 18px; }
+  .toc-label { font-size: 14px; color: var(--foreground); font-weight: 600; letter-spacing: -.005em; padding: 4px 8px; margin-bottom: 2px; text-transform: none; }
+  .toc-link {
+    display: block; padding: 5px 8px; font-size: 13px;
+    color: var(--muted-foreground); text-decoration: none;
+    border-radius: calc(var(--radius) - 2px);
+    transition: color .15s, background .15s;
+    font-weight: 400; line-height: 1.5;
+  }
+  .toc-link:hover { color: var(--foreground); }
+  .toc-link.active { color: var(--foreground); font-weight: 500; background: var(--muted); }
+
+  .main { margin-left: var(--toc-width); flex: 1; min-width: 0; max-width: 760px; width: 100%; padding: 36px 48px 120px; font-size: 14.5px; }
+  .main > * { max-width: 100%; }
+
+  /* ── Typography (shadcn docs spec) ── */
+  h1 { font-size: 30px; font-weight: 700; color: var(--foreground); letter-spacing: -.025em; line-height: 1.15; margin-bottom: 8px; }
+  h1 span { color: var(--foreground); font-weight: 700; }
+  .hero-sub { font-size: 16px; color: var(--muted-foreground); line-height: 1.6; margin-bottom: 32px; font-style: normal; font-family: var(--font-sans); max-width: 60ch; }
+  h2 { font-size: 22px; font-weight: 600; color: var(--foreground); letter-spacing: -.02em; line-height: 1.3; margin-top: 48px; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border); scroll-margin-top: calc(var(--header-h) + 24px); }
+  h2 .num { color: var(--muted-foreground); font-family: var(--font-mono); font-size: 12.5px; font-weight: 400; margin-right: 10px; }
+  h3 { font-size: 17px; font-weight: 600; color: var(--foreground); letter-spacing: -.015em; margin-top: 32px; margin-bottom: 6px; }
+  h3::before { content: none; }
+  h4 { font-size: 14.5px; font-weight: 600; color: var(--foreground); letter-spacing: -.005em; margin-top: 24px; margin-bottom: 6px; text-transform: none; }
+  p { margin-bottom: 14px; color: var(--foreground); }
+  a { color: var(--foreground); text-decoration: underline; text-decoration-color: var(--border); text-underline-offset: 3px; transition: text-decoration-color .15s; }
+  a:hover { text-decoration-color: var(--foreground); }
+  strong { color: var(--foreground); font-weight: 600; }
+  ul, ol { padding-left: 1.35rem; margin-bottom: 14px; }
+  li { margin-bottom: 4px; }
+
+  /* ── Code ── */
+  pre {
+    background: var(--muted); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px 18px; overflow-x: auto; margin: 14px 0 20px;
+    font-family: var(--font-mono); font-size: 13px; line-height: 1.65;
+    color: var(--foreground); position: relative;
+  }
+  pre .comment { color: var(--muted-foreground); font-style: italic; }
+  pre .cmd { color: var(--foreground); font-weight: 500; }
+  pre .flag { color: var(--muted-foreground); }
+  pre .string { color: var(--foreground); }
+  pre .kw { color: var(--foreground); font-weight: 600; }
+  code { font-family: var(--font-mono); background: var(--muted); padding: 1px 6px; border-radius: 4px; font-size: .875em; color: var(--foreground); border: 0; }
+
+  /* ── Cards & callouts ── */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; margin: 16px 0; }
+  .callout { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin: 16px 0; font-size: 14px; display: flex; gap: 10px; align-items: flex-start; background: var(--muted); }
+  .callout .icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .callout.tip { background: var(--info-bg); border-color: var(--info-border); color: var(--info-fg); }
+  .callout.tip strong, .callout.tip a { color: var(--info-fg); }
+  .callout.warn { background: var(--warn-bg); border-color: var(--warn-border); color: var(--warn-fg); }
+  .callout.warn strong, .callout.warn a { color: var(--warn-fg); }
+  .callout.danger { background: var(--danger-bg); border-color: var(--danger-border); color: var(--danger-fg); }
+  .callout.danger strong, .callout.danger a { color: var(--danger-fg); }
+  .callout.success { background: var(--success-bg); border-color: var(--success-border); color: var(--success-fg); }
+  .callout.success strong, .callout.success a { color: var(--success-fg); }
+
+  /* ── Steps ── */
+  .step { display: flex; align-items: flex-start; gap: 14px; margin: 14px 0; }
+  .step-num {
+    width: 26px; height: 26px; border-radius: 999px;
+    background: var(--muted); border: 1px solid var(--border);
+    color: var(--foreground); font-weight: 600; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .step-content { flex: 1; }
+  .step-content p:last-child { margin-bottom: 0; }
+
+  /* ── Flow / pipeline ── */
+  .flow { display: flex; align-items: center; gap: 0; margin: 18px 0; flex-wrap: wrap; font-size: 13px; font-weight: 500; }
+  .flow-node { background: var(--card); border: 1px solid var(--border); padding: 6px 12px; border-radius: calc(var(--radius) - 2px); color: var(--foreground); white-space: nowrap; }
+  .flow-arrow { color: var(--muted-foreground); padding: 0 8px; font-size: 14px; }
+
+  /* ── Tables ── */
+  .table-wrap { width: 100%; overflow-x: auto; margin: 14px 0; border: 1px solid var(--border); border-radius: var(--radius); -webkit-overflow-scrolling: touch; }
+  .table-wrap table { margin: 0; border: 0; border-radius: 0; }
+  .table-wrap table th:first-child, .table-wrap table td:first-child { padding-left: 14px; }
+  .table-wrap table th:last-child, .table-wrap table td:last-child { padding-right: 14px; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  th { text-align: left; padding: 10px 14px; background: var(--muted); color: var(--foreground); font-weight: 600; border-bottom: 1px solid var(--border); font-size: 12.5px; text-transform: none; letter-spacing: 0; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--foreground); }
+  tr:last-child td { border-bottom: 0; }
+  tr:hover td { background: var(--muted); }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px;
+    font-size: 11px; font-weight: 500; letter-spacing: 0; text-transform: none;
+    vertical-align: middle; border: 1px solid var(--border);
+    background: var(--muted); color: var(--muted-foreground);
+  }
+  .badge.path-a { color: var(--info-fg); background: var(--info-bg); border-color: var(--info-border); }
+  .badge.path-b { color: var(--foreground); background: var(--muted); }
+  .badge.required { color: var(--danger-fg); background: var(--danger-bg); border-color: var(--danger-border); }
+  .badge.recommended { color: var(--warn-fg); background: var(--warn-bg); border-color: var(--warn-border); }
+  .badge.optional { color: var(--muted-foreground); background: transparent; }
+
+  /* ── Divider ── */
+  .section-divider { height: 1px; background: var(--border); margin: 48px 0 0; }
+  .section-divider + h2 { margin-top: 48px; }
+
+  /* ── DNS table ── */
+  .dns-table { font-family: var(--font-mono); }
+  .dns-table td, .dns-table th { font-size: 12.5px; }
+  .dns-table .type { color: var(--foreground); font-weight: 600; }
+  .dns-table .name-col { color: var(--foreground); }
+  .dns-table .val { color: var(--muted-foreground); }
+
+  /* ── Path picker cards ── */
+  .path-box { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0; }
+  .path-option { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; transition: border-color .15s, background .15s; }
+  .path-option:hover { border-color: var(--foreground); }
+  .path-option h4 { margin-top: 0; color: var(--foreground); }
+  .path-option p { font-size: 13px; color: var(--muted-foreground); margin: 0; }
+
+  /* ── Copy button ── */
+  .code-wrap { position: relative; }
+  .copy-btn {
+    position: absolute; top: 8px; right: 8px;
+    background: var(--card); border: 1px solid var(--border); color: var(--muted-foreground);
+    font-size: 11px; padding: 4px 10px; border-radius: calc(var(--radius) - 2px);
+    cursor: pointer; font-family: var(--font-sans); font-weight: 500;
+    transition: all .15s;
+  }
+  .copy-btn:hover { background: var(--muted); color: var(--foreground); border-color: var(--foreground); }
+
+  /* ── Req legend ── */
+  .req-legend { display: flex; gap: 20px; flex-wrap: wrap; margin: 8px 0 20px; padding: 0; background: transparent; border: 0; font-size: 12.5px; color: var(--muted-foreground); }
+  .req-legend span { display: flex; align-items: center; gap: 6px; }
+
+  /* ── Web console alt block ── */
+  .console-alt { background: var(--muted); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin: 16px 0; font-size: 13.5px; }
+  .console-alt .console-label { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted-foreground); font-weight: 600; margin-bottom: 6px; }
+
+  /* ── Checklist ── */
+  .checklist { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; margin: 18px 0; }
+  .checklist h4 { margin-top: 0; font-size: 15px; color: var(--foreground); text-transform: none; letter-spacing: 0; margin-bottom: 8px; }
+  .check-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; cursor: pointer; user-select: none; }
+  .check-item:last-child { border-bottom: none; }
+  .check-item input[type="checkbox"] {
+    appearance: none; -webkit-appearance: none; width: 16px; height: 16px;
+    border: 1px solid var(--border); border-radius: 4px;
+    background: var(--background); cursor: pointer; flex-shrink: 0; position: relative;
+    transition: all .15s;
+  }
+  .check-item input[type="checkbox"]:checked { background: var(--primary); border-color: var(--primary); }
+  .check-item input[type="checkbox"]:checked::after {
+    content: '✓'; position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%); color: var(--primary-foreground); font-size: 11px; font-weight: 700;
+  }
+  .check-item label { cursor: pointer; flex: 1; color: var(--foreground); }
+  .check-item .check-badge { font-size: 10px; }
+
+  /* ── Mistake item ── */
+  .mistake { padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .mistake:last-child { border-bottom: none; }
+  .mistake-title { font-weight: 600; color: var(--foreground); font-size: 14px; margin-bottom: 4px; }
+  .mistake-fix { font-size: 13.5px; color: var(--muted-foreground); }
+  .mistake-fix strong { color: var(--foreground); }
+
+  /* ── Footer ── */
+  .footer-wrap { max-width: 1400px; margin: 0 auto; }
+  .footer {
+    margin-left: var(--toc-width);
+    max-width: 760px;
+    padding: 24px 48px 40px;
+    color: var(--muted-foreground); font-size: 13px;
+    border-top: 1px solid var(--border);
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center;
+    text-align: center;
+  }
+  .footer a { color: var(--foreground); text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+  .footer .sep { color: var(--muted-foreground); opacity: .5; }
+
+
+  /* ── Responsive ── */
+  @media (max-width: 1100px) {
+    .sidebar { left: 24px; }
+  }
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); transition: transform .25s; z-index: 39; width: 280px; min-width: 280px; left: 0; padding: 24px 16px; border-right: 1px solid var(--border); background: var(--background); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; padding: 28px 20px 80px; max-width: 100%; }
+    .footer { margin-left: 0; max-width: 100%; padding: 24px 20px; }
+    .hamburger { display: inline-flex; }
+    h1 { font-size: 28px; }
+    h2 { font-size: 20px; margin-top: 48px; }
+    .path-box { grid-template-columns: 1fr; }
+    .site-header .subtitle { display: none; }
+    .site-header nav.top-nav { display: none; }
+    .search-stub { display: none; }
+    .req-legend { flex-direction: column; gap: 6px; }
+    .site-header { padding: 0 16px; gap: 12px; }
+  }
+  @media (max-width: 1200px) {
+    .search-stub { min-width: 0; gap: 20px; }
+  }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted-foreground); }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <button class="hamburger" onclick="document.querySelector('.sidebar').classList.toggle('open')" aria-label="Menu">☰</button>
+  <a href="#" class="logo" aria-label="Hetzner Guide home">
+    <span class="logo-mark" aria-hidden="true">H</span>
+    <span>hetzner/guide</span>
+  </a>
+  <nav class="top-nav" aria-label="Primary">
+    <a href="#overview" class="active">Docs</a>
+    <a href="#choose-path">Paths</a>
+    <a href="#h-projects">Concepts</a>
+    <a href="#cf-settings">Cloudflare</a>
+    <a href="#commands">Cheat Sheet</a>
+  </nav>
+  <div class="header-right">
+    <a class="support-btn" href="https://buymeacoffee.com/farhan.app" target="_blank" rel="noopener" title="Support this guide">Support</a>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle light/dark">
+      <svg class="sun" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0V5a1 1 0 0 1 1-1Zm0 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm9-5a1 1 0 0 1-1 1h-2a1 1 0 1 1 0-2h2a1 1 0 0 1 1 1ZM6 12a1 1 0 0 1-1 1H3a1 1 0 1 1 0-2h2a1 1 0 0 1 1 1Zm6 6a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Zm6.364-11.778a1 1 0 0 1 0 1.414l-1.414 1.415a1 1 0 0 1-1.415-1.415l1.415-1.414a1 1 0 0 1 1.414 0ZM7.464 16.95a1 1 0 0 1 0 1.414L6.05 19.78a1 1 0 0 1-1.414-1.414l1.414-1.415a1 1 0 0 1 1.414 0Zm10.9 2.828a1 1 0 0 1-1.414 0l-1.415-1.414a1 1 0 1 1 1.415-1.414l1.414 1.414a1 1 0 0 1 0 1.414ZM7.464 7.05a1 1 0 0 1-1.414 0L4.636 5.636A1 1 0 0 1 6.05 4.222l1.414 1.414a1 1 0 0 1 0 1.414Z"/></svg>
+      <svg class="moon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.742 13.045a8.088 8.088 0 0 1-2.077.271c-2.135 0-4.14-.83-5.646-2.336a8.025 8.025 0 0 1-2.064-7.723A1 1 0 0 0 9.73 2.034a10.014 10.014 0 0 0-4.489 2.582c-3.898 3.898-3.898 10.243 0 14.143a9.937 9.937 0 0 0 7.072 2.93 9.93 9.93 0 0 0 7.07-2.929 10.007 10.007 0 0 0 2.583-4.491 1.001 1.001 0 0 0-1.224-1.224Z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="layout">
+
+<nav class="sidebar" id="sidebar">
+  <div class="toc-group">
+    <div class="toc-label">Getting Started</div>
+    <a class="toc-link" href="#overview">Overview</a>
+    <a class="toc-link" href="#prereqs">Prerequisites</a>
+    <a class="toc-link" href="#choose-path">Choose Your Path</a>
+    <a class="toc-link" href="#terminal-options">Terminal Options</a>
+    <a class="toc-link" href="#terminal-survival">Terminal Survival Guide</a>
+  </div>
+  <div class="toc-group">
+    <div class="toc-label">Hetzner Concepts</div>
+    <a class="toc-link" href="#h-projects">Projects</a>
+    <a class="toc-link" href="#h-locations">Locations & Datacenters</a>
+    <a class="toc-link" href="#h-types">Server Types (CX/CAX/CPX/CCX)</a>
+    <a class="toc-link" href="#h-images">Images (OS/Apps/Snapshots)</a>
+    <a class="toc-link" href="#h-ipv4-ipv6">IPv4 vs IPv6</a>
+    <a class="toc-link" href="#h-networks">Private Networks</a>
+    <a class="toc-link" href="#h-volumes">Volumes (Block Storage)</a>
+    <a class="toc-link" href="#h-placement">Placement Groups</a>
+    <a class="toc-link" href="#h-cloudinit">Cloud-init / User Data</a>
+    <a class="toc-link" href="#h-labels">Labels</a>
+  </div>
+  <div class="toc-group">
+    <div class="toc-label">Part 1 — Server Setup</div>
+    <a class="toc-link" href="#s1-account">1.1 Hetzner Account</a>
+    <a class="toc-link" href="#s1-ssh">1.2 SSH Keys</a>
+    <a class="toc-link" href="#s1-create">1.3 Create Server</a>
+    <a class="toc-link" href="#s1-connect">1.4 Connect via SSH</a>
+    <a class="toc-link" href="#s1-secure">1.5 Secure the Server</a>
+    <a class="toc-link" href="#s1-firewall">1.6 Firewall Setup</a>
+    <a class="toc-link" href="#s1-fail2ban">1.7 Fail2Ban</a>
+    <a class="toc-link" href="#s1-updates">1.8 Auto Updates</a>
+    <a class="toc-link" href="#s1-monitoring">1.9 Basic Monitoring</a>
+    <a class="toc-link" href="#s1-checklist">🔐 Hardening Checklist</a>
+  </div>
+  <div class="toc-group">
+    <div class="toc-label">Part 2A — Manual Stack</div>
+    <a class="toc-link" href="#s2-nginx">2.1 Install NGINX</a>
+    <a class="toc-link" href="#s2-php">2.2 Install PHP</a>
+    <a class="toc-link" href="#s2-mysql">2.3 Install MariaDB</a>
+    <a class="toc-link" href="#s2-domain-cf">2.4 Cloudflare DNS</a>
+    <a class="toc-link" href="#s2-vhost">2.5 NGINX Virtual Hosts</a>
+    <a class="toc-link" href="#s2-ssl">2.6 SSL Certificates</a>
+    <a class="toc-link" href="#s2-wp">2.7 Install WordPress</a>
+    <a class="toc-link" href="#s2-multi">2.8 Multi Sites/Subdomains</a>
+    <a class="toc-link" href="#s2-static">2.9 Non-WordPress Sites</a>
+  </div>
+  <div class="toc-group">
+    <div class="toc-label">Part 2B — CloudPanel</div>
+    <a class="toc-link" href="#cp-install">3.1 Install CloudPanel</a>
+    <a class="toc-link" href="#cp-access">3.2 First Login</a>
+    <a class="toc-link" href="#cp-dns">3.3 Cloudflare DNS</a>
+    <a class="toc-link" href="#cp-wp">3.4 Add WordPress Site</a>
+    <a class="toc-link" href="#cp-php">3.5 Add PHP / Static Site</a>
+    <a class="toc-link" href="#cp-subdomain">3.6 Subdomains</a>
+    <a class="toc-link" href="#cp-multidomain">3.7 Multiple Domains</a>
+    <a class="toc-link" href="#cp-ssl">3.8 SSL Certificates</a>
+    <a class="toc-link" href="#cp-backups">3.9 Backups</a>
+  </div>
+  <div class="toc-group">
+    <div class="toc-label">Day-to-Day</div>
+    <a class="toc-link" href="#sftp">Uploading Files (SFTP)</a>
+    <a class="toc-link" href="#cron-jobs">Scheduled Tasks / Cron</a>
+    <a class="toc-link" href="#email">Email / Contact Forms</a>
+    <a class="toc-link" href="#reboot">Reboots & Maintenance</a>
+  </div>
+  <div class="toc-group">
+    <div class="toc-label">Reference</div>
+    <a class="toc-link" href="#cf-settings">Cloudflare Settings</a>
+    <a class="toc-link" href="#test-everything">Test Everything Works</a>
+    <a class="toc-link" href="#common-mistakes">Common Mistakes</a>
+    <a class="toc-link" href="#reconnect">How to Reconnect Later</a>
+    <a class="toc-link" href="#scaling">Scaling Later</a>
+    <a class="toc-link" href="#troubleshoot">Troubleshooting</a>
+    <a class="toc-link" href="#commands">Command Cheat Sheet</a>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- ══════════ HERO ══════════ -->
+<h1>Hetzner Cloud — Complete Hosting Guide</h1>
+<p class="hero-sub">From zero to multiple live websites on Hetzner Cloud, with Cloudflare DNS, WordPress, and CloudPanel. Written for someone who has never touched a server before.</p>
+
+<div class="callout tip">
+  <span class="icon">📖</span>
+  <div>This guide covers <strong>two paths</strong>: a manual LEMP stack (NGINX + PHP + MySQL) for full control, and <strong>CloudPanel</strong> for a GUI-based approach. Both use Cloudflare for DNS. Read Part 1 (server setup) first — it applies to both paths.</div>
+</div>
+
+<div class="req-legend">
+  <span><span class="badge required">Required</span> You must do this — skipping will break things</span>
+  <span><span class="badge recommended">Recommended</span> Strongly advised for security / usability</span>
+  <span><span class="badge optional">Optional</span> Nice to have — skip to keep things simple</span>
+</div>
+
+<!-- ══════════ OVERVIEW ══════════ -->
+<h2 id="overview"><span class="num">00</span>Overview & What You'll Build</h2>
+<div class="card">
+  <p>✅ A Hetzner Cloud server running Ubuntu, fully secured</p>
+  <p>✅ SSH key authentication (no passwords)</p>
+  <p>✅ A firewall blocking everything except web traffic and SSH</p>
+  <p>✅ Cloudflare managing DNS with CDN/DDoS protection</p>
+  <p>✅ One or more WordPress websites</p>
+  <p>✅ Ability to add non-WordPress (static HTML, Node.js, PHP) sites</p>
+  <p>✅ Multiple domains and subdomains on one server</p>
+  <p>✅ Free SSL certificates</p>
+  <p style="margin:0;">✅ Automated backups</p>
+</div>
+<h3>The Architecture</h3>
+<div class="flow">
+  <div class="flow-node">Your Visitors</div><div class="flow-arrow">→</div>
+  <div class="flow-node">Cloudflare (CDN/DNS)</div><div class="flow-arrow">→</div>
+  <div class="flow-node">Hetzner Server</div><div class="flow-arrow">→</div>
+  <div class="flow-node">NGINX / CloudPanel</div><div class="flow-arrow">→</div>
+  <div class="flow-node">Your Websites</div>
+</div>
+
+<!-- ══════════ PREREQS ══════════ -->
+<h2 id="prereqs"><span class="num">01</span>Prerequisites</h2>
+<table>
+  <tr><th>What</th><th>Why</th><th>Cost</th></tr>
+  <tr><td>Hetzner account</td><td>Your server lives here</td><td>From ~€4.50/mo</td></tr>
+  <tr><td>Cloudflare account</td><td>DNS, CDN, DDoS protection</td><td>Free plan works</td></tr>
+  <tr><td>A domain name</td><td>Already on Cloudflare</td><td>Varies</td></tr>
+  <tr><td>A way to type commands</td><td>Only for initial setup — see below</td><td>Free</td></tr>
+</table>
+
+<!-- ══════════ CHOOSE PATH ══════════ -->
+<h2 id="choose-path"><span class="num">02</span>Choose Your Path</h2>
+<div class="path-box">
+  <div class="path-option">
+    <h4 style="color:var(--blue)">🔧 Path A — Manual LEMP Stack</h4>
+    <p>Install NGINX, PHP, MySQL yourself. Full control, more terminal usage throughout.</p>
+  </div>
+  <div class="path-option">
+    <h4 style="color:var(--purple)">🖥️ Path B — CloudPanel (GUI)</h4>
+    <p>Free control panel. One-time terminal install, then everything else is browser-based. <strong>Best if you prefer not to use the terminal.</strong></p>
+  </div>
+</div>
+<div class="callout warn">
+  <span class="icon">⚠️</span>
+  <div><strong>Choose ONE path.</strong> Don't install a manual LEMP stack and then CloudPanel on the same server — they will conflict.</div>
+</div>
+
+<!-- ══════════ TERMINAL OPTIONS ══════════ -->
+<h2 id="terminal-options"><span class="num">03</span>How You'll Type Commands <span class="badge required">Required — Read This</span></h2>
+<p>You'll need to type a handful of commands during initial setup. Pick whichever option you're most comfortable with:</p>
+
+<div class="card">
+  <h4 style="margin-top:0;">Option A: Hetzner Web Console (100% browser — no setup needed)</h4>
+  <p>After creating your server, click the <strong>terminal icon</strong> (<code>>_</code>) on your server's dashboard page. A terminal opens in a new browser tab.</p>
+  <p><strong>Pros:</strong> No software to install. Works on any computer, even a Chromebook.<br>
+  <strong>Cons:</strong> Copy/paste can be clunky (use Ctrl+Shift+V). Slight input lag. Can time out if idle.</p>
+  <p style="margin:0;"><strong>How:</strong> Hetzner Cloud Console → click your server → terminal icon (top-right) → new tab opens.</p>
+</div>
+<div class="card">
+  <h4 style="margin-top:0;">Option B: Your computer's built-in terminal</h4>
+  <p><strong>Mac:</strong> Terminal app (search Spotlight). <strong>Windows 10/11:</strong> Windows Terminal or PowerShell. <strong>Linux:</strong> Your terminal of choice.</p>
+  <p style="margin:0;"><strong>Pros:</strong> Faster, better copy/paste. <strong>Cons:</strong> Requires SSH keys (section 1.2).</p>
+</div>
+<div class="card">
+  <h4 style="margin-top:0;">Option C: PuTTY (Windows graphical SSH client)</h4>
+  <p style="margin:0;">Download <a href="https://www.putty.org/" target="_blank">PuTTY</a>. Enter your server IP, click Open, terminal appears.</p>
+</div>
+<div class="callout tip">
+  <span class="icon">💡</span>
+  <div><strong>Our recommendation if you're not familiar with terminals:</strong> Use the <strong>Hetzner Web Console</strong> (Option A). Zero preparation — just click a button. Throughout this guide, <span style="color:var(--purple);">🖥️ Web Console</span> notes flag anything different for browser-console users.</div>
+</div>
+
+<!-- ══════════ TERMINAL SURVIVAL GUIDE ══════════ -->
+<h2 id="terminal-survival"><span class="num">04</span>Terminal Survival Guide <span class="badge recommended">Recommended — Read This</span></h2>
+
+<p>A few things that will save you a lot of confusion:</p>
+
+<div class="card">
+  <p>🔑 <strong><code>sudo</code></strong> — means "run this command as admin". Most commands in this guide use <code>sudo</code> because they change system settings. If you're logged in as <code>root</code>, you don't need <code>sudo</code> (you're already admin). If logged in as your <code>deploy</code> user, always use <code>sudo</code> for system commands.</p>
+  <p>⌨️ <strong>Ctrl+C</strong> — cancels/stops whatever command is currently running. If something hangs or you made a mistake, press <strong>Ctrl+C</strong> to abort and get back to a clean prompt.</p>
+  <p>📝 <strong>nano</strong> (the text editor) — when this guide says "edit a file", we use nano. Quick reference: <strong>Ctrl+W</strong> = search, <strong>Ctrl+X</strong> = exit, then <strong>Y</strong> to save, <strong>Enter</strong> to confirm filename. Arrow keys to move around.</p>
+  <p>👁️ <strong>Passwords are invisible</strong> — when typing a password in the terminal, nothing appears on screen. No dots, no asterisks, nothing. This is normal. Just type it and press Enter.</p>
+  <p>📋 <strong>Pasting</strong> — in most terminals: <strong>Ctrl+Shift+V</strong> (Linux/Windows) or <strong>Cmd+V</strong> (Mac). In Hetzner Web Console, try right-click → Paste if shortcuts don't work.</p>
+  <p style="margin:0;">🚨 <strong>If a command fails</strong> — don't keep retrying randomly. <strong>Read the error message.</strong> It usually tells you exactly what's wrong. Common causes: typo in the command, missing <code>sudo</code>, or a service that hasn't started yet.</p>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- HETZNER CONCEPTS                  -->
+<!-- ═══════════════════════════════════ -->
+<div class="section-divider"></div>
+
+<h2 id="h-projects"><span class="num">05</span>Hetzner Projects <span class="badge recommended">Recommended — Read First</span></h2>
+<p>In Hetzner Cloud, everything (servers, firewalls, SSH keys, volumes, networks, backups, API tokens) lives inside a <strong>Project</strong>. A project is a container that groups related resources and isolates billing and access. You can have many projects under a single Hetzner account.</p>
+<div class="card">
+  <p><strong>Good defaults:</strong> one project per client, one per major app, or one "personal" project for everything you own. Don't mix production and throwaway experiments in the same project — firewalls and SSH keys only exist within a project, so splitting keeps accidents contained.</p>
+  <p style="margin:0;"><strong>How:</strong> Hetzner Cloud Console → top-left project dropdown → <strong>New Project</strong> → name it → enter it before creating your first server.</p>
+</div>
+
+<h2 id="h-locations"><span class="num">06</span>Locations & Datacenters</h2>
+<p>Hetzner runs datacenters in several regions. Pick the one closest to your main audience — latency matters far more than marginal price differences. Location cannot be changed after creation; you'd have to migrate via snapshot.</p>
+<table>
+  <tr><th>Location</th><th>Code</th><th>Region</th><th>Good for</th></tr>
+  <tr><td>Falkenstein, DE</td><td><code>fsn1</code></td><td>Europe</td><td>EU audiences, cheapest historically</td></tr>
+  <tr><td>Nuremberg, DE</td><td><code>nbg1</code></td><td>Europe</td><td>EU audiences</td></tr>
+  <tr><td>Helsinki, FI</td><td><code>hel1</code></td><td>Europe (North)</td><td>Nordics / Baltics / Russia-adjacent</td></tr>
+  <tr><td>Ashburn, VA, US</td><td><code>ash</code></td><td>US East</td><td>US / Canada East, Latin America</td></tr>
+  <tr><td>Hillsboro, OR, US</td><td><code>hil</code></td><td>US West</td><td>US West, West Canada</td></tr>
+  <tr><td>Singapore</td><td><code>sin</code></td><td>Asia-Pacific</td><td>SEA, South Asia, Australia</td></tr>
+</table>
+<div class="callout tip"><span class="icon">💡</span><div>Not sure? With Cloudflare in front (which this guide uses), your static and cached content is served from Cloudflare's global edge regardless — so the origin location mainly impacts dynamic requests (WordPress admin, logged-in users, API calls).</div></div>
+
+<h2 id="h-types"><span class="num">07</span>Server Types — CX vs CAX vs CPX vs CCX</h2>
+<p>Hetzner offers two tiers: <strong>Shared vCPU</strong> (cheaper, fine for most websites) and <strong>Dedicated vCPU</strong> (guaranteed cores, for CPU-heavy workloads). Within each tier there are different CPU architectures.</p>
+<table>
+  <tr><th>Line</th><th>Tier</th><th>CPU</th><th>Notes</th><th>Use when</th></tr>
+  <tr><td><strong>CX</strong></td><td>Shared</td><td>Intel x86</td><td>Classic all-rounder</td><td>Default choice for WordPress / PHP / Node</td></tr>
+  <tr><td><strong>CPX</strong></td><td>Shared</td><td>AMD x86</td><td>Faster per-core than CX, small premium</td><td>Better perf on the same budget</td></tr>
+  <tr><td><strong>CAX</strong></td><td>Shared</td><td>Ampere ARM64</td><td>Cheapest, excellent perf/€</td><td>Only if your stack runs on ARM (most do — Ubuntu, NGINX, PHP, MariaDB, Node all fine)</td></tr>
+  <tr><td><strong>CCX</strong></td><td>Dedicated</td><td>AMD EPYC</td><td>Guaranteed vCPUs, 2–4× price</td><td>Sustained CPU load, game/app servers, CI</td></tr>
+</table>
+<div class="callout warn"><span class="icon">⚠️</span><div><strong>ARM caveat (CAX):</strong> some legacy plugins or proprietary binaries may lack ARM builds. Safe for vanilla WordPress; verify if you use niche tools. When in doubt, use CPX.</div></div>
+<p><strong>You can rescale freely</strong> between sizes within a line (e.g. CX22 → CX32), and also between shared lines that share architecture. Changing architecture (x86 ↔ ARM) requires a fresh install or snapshot-based migration.</p>
+
+<h2 id="h-images"><span class="num">08</span>Images — What "Image" Means</h2>
+<p>The "Image" is what gets installed on your new server. Hetzner offers four kinds:</p>
+<div class="card">
+  <p><strong>OS images</strong> — plain Ubuntu, Debian, Fedora, Rocky, Alma, CentOS Stream, openSUSE. <strong>Use Ubuntu 24.04 LTS</strong> for this guide.</p>
+  <p><strong>Apps</strong> — prebuilt OS + software bundles (Docker, WordPress, LAMP, cPanel, Plesk, GitLab, etc.). Handy but less transparent; this guide prefers installing manually on Ubuntu.</p>
+  <p><strong>Snapshots</strong> — point-in-time images <em>you</em> create from an existing server. Useful for cloning or migrating between locations / architectures.</p>
+  <p style="margin:0;"><strong>Backups</strong> — automatic daily snapshots Hetzner manages for you (enable in the server's Backups tab; ~20% of server price).</p>
+</div>
+
+<h2 id="h-ipv4-ipv6"><span class="num">09</span>IPv4 vs IPv6 <span class="badge recommended">Recommended — Read This</span></h2>
+<p>Every server gets network addresses. You'll see both "IPv4" and "IPv6" checkboxes during server creation. Here's what they actually mean:</p>
+
+<h3>What they are</h3>
+<div class="card">
+  <p><strong>IPv4</strong> — the old, short format (e.g. <code>168.119.12.34</code>). Four numbers 0–255. The internet is running out of them, so Hetzner charges a small fee for each one (~€0.60/month). Every website visitor, every OS, every DNS provider understands IPv4. It is the <strong>lowest common denominator</strong>.</p>
+  <p style="margin:0;"><strong>IPv6</strong> — the new, long format (e.g. <code>2a01:4f8:c17:1a2b::1</code>). Effectively unlimited supply, so Hetzner gives you a <strong>/64 block</strong> (18 quintillion addresses) for free. Supported by all modern networks, but not every ISP or corporate network has it turned on.</p>
+</div>
+
+<h3>Which should I enable?</h3>
+<table>
+  <tr><th>Setup</th><th>Works for visitors?</th><th>Cost</th><th>Recommended?</th></tr>
+  <tr><td>IPv4 only</td><td>✅ Everyone</td><td>~€0.60/mo</td><td>OK — simple</td></tr>
+  <tr><td>IPv4 + IPv6 (dual-stack)</td><td>✅ Everyone (IPv6 users get IPv6, others get IPv4)</td><td>~€0.60/mo</td><td>✅ <strong>Best — default</strong></td></tr>
+  <tr><td>IPv6 only</td><td>⚠️ Only IPv6-capable visitors (~40% globally). Most home/office networks still can't reach you.</td><td>Free</td><td>❌ Don't — you'll lose traffic</td></tr>
+</table>
+
+<div class="callout tip"><span class="icon">💡</span><div><strong>Default for this guide: enable both.</strong> Leave the defaults in the Hetzner UI. You pay the same tiny IPv4 fee either way, and dual-stack means the widest reach.</div></div>
+
+<h3>What this means in DNS</h3>
+<div class="card">
+  <p><strong>A record</strong> → points a domain to an IPv4 address. Example: <code>example.com A 168.119.12.34</code>.</p>
+  <p style="margin:0;"><strong>AAAA record</strong> ("quad-A") → points a domain to an IPv6 address. Example: <code>example.com AAAA 2a01:4f8:c17:1a2b::1</code>.</p>
+</div>
+<p>If you set up DNS <strong>through Cloudflare with the orange cloud (Proxied)</strong> — which this guide recommends — you only need the A record. Cloudflare talks to your server over whichever protocol is available; visitors talk to Cloudflare. So <strong>IPv6 on the origin is "nice to have" but not required</strong> for your site to be reachable over IPv6 globally.</p>
+<p>If you go <strong>DNS-only (grey cloud)</strong> and want full IPv6 support for visitors, add an AAAA record too, pointing at the <code>::1</code> address from your Hetzner server's /64 range (Server → Networking → copy the IPv6).</p>
+
+<h3>Connecting via SSH</h3>
+<div class="code-wrap"><pre><span class="comment"># Over IPv4</span>
+<span class="cmd">ssh</span> deploy@<span class="string">168.119.12.34</span>
+
+<span class="comment"># Over IPv6 (brackets not needed for ssh, but needed in URLs)</span>
+<span class="cmd">ssh</span> deploy@<span class="string">2a01:4f8:c17:1a2b::1</span></pre></div>
+<p>Your home ISP must support IPv6 for the second one to work. If it hangs, your network probably can't route IPv6 — just use IPv4.</p>
+
+<div class="callout warn"><span class="icon">⚠️</span><div><strong>Firewalls apply to both.</strong> UFW and Hetzner Cloud Firewalls filter IPv4 and IPv6 separately. The commands in this guide (<code>ufw allow 80/tcp</code>) apply to both by default, but if you write custom rules with explicit IPs, remember to cover v6 too.</div></div>
+
+<h2 id="h-networks"><span class="num">10</span>Private Networks <span class="badge optional">Optional</span></h2>
+<p>A Private Network lets multiple servers in the same location talk to each other over a private subnet that is <strong>not exposed to the public internet</strong>. You'd use this when you eventually split your stack — e.g. one server for the web app, another for the database.</p>
+<div class="card">
+  <p><strong>When you need it:</strong> multi-server setups, database server separate from web server, internal-only services (Redis, private APIs).</p>
+  <p style="margin:0;"><strong>When you don't:</strong> single-server WordPress setup (this guide's default). Skip for now.</p>
+</div>
+<p><strong>How:</strong> Hetzner Console → project → <strong>Networks</strong> → <strong>Create Network</strong> → pick a range (e.g. <code>10.0.0.0/16</code>) → attach servers to it. Free of charge.</p>
+
+<h2 id="h-volumes"><span class="num">11</span>Volumes (Block Storage) <span class="badge optional">Optional</span></h2>
+<p>Volumes are <strong>extra disks</strong> you can attach to a server. Your server's built-in disk is fine for most websites (CX22 = 40 GB, plenty for dozens of WordPress sites). Volumes matter when you outgrow that.</p>
+<div class="card">
+  <p><strong>Key traits:</strong> 10 GB – 10 TB per volume. Independent of the server — you can detach from one server and attach to another. ~€0.044 per GB/month (EU). Only available in the same location as the server.</p>
+  <p style="margin:0;"><strong>When you'd use one:</strong> large media libraries, big databases, shared storage you want to keep even if you rebuild the server.</p>
+</div>
+<p>Create in the browser (Volumes → Create Volume), attach to a server, then mount inside the OS (Hetzner shows the exact commands). You don't need this on day one — add it later if you hit a disk wall.</p>
+
+<h2 id="h-placement"><span class="num">12</span>Placement Groups <span class="badge optional">Optional</span></h2>
+<p>A Placement Group tells Hetzner: "spread these servers across different physical hosts so they don't all go down together." Only useful if you run <strong>multiple servers</strong> that back each other up (e.g. two web servers behind a load balancer).</p>
+<p>For a single-server setup, ignore this entirely. For HA setups: create a <em>spread</em> placement group, then assign each server to it at creation time.</p>
+
+<h2 id="h-cloudinit"><span class="num">13</span>Cloud-init / User Data <span class="badge optional">Optional — Power User</span></h2>
+<p>During server creation, there's a <strong>"Cloud config"</strong> / User Data field. This lets you paste a script that runs automatically on first boot — so your server comes up already updated, with users created and software installed, without touching the terminal manually.</p>
+<p>Example — this auto-updates and installs basics:</p>
+<div class="code-wrap"><pre>#cloud-config
+package_update: true
+package_upgrade: true
+packages:
+  - ufw
+  - fail2ban
+  - htop
+  - unattended-upgrades
+runcmd:
+  - ufw allow OpenSSH
+  - ufw allow 80/tcp
+  - ufw allow 443/tcp
+  - ufw --force enable
+  - systemctl enable --now fail2ban</pre></div>
+<div class="callout tip"><span class="icon">💡</span><div>Great for spinning up identical servers repeatably. Skip on your first server — learn the manual steps first so you understand what cloud-init is automating.</div></div>
+
+<h2 id="h-labels"><span class="num">14</span>Labels <span class="badge optional">Optional</span></h2>
+<p>Labels are key-value tags (<code>env=prod</code>, <code>client=acme</code>) you can attach to servers, volumes, networks, etc. Useful once you have many resources — filter the Console by label, or target groups of servers via the API. Ignore if you have 1–2 servers.</p>
+
+
+<!-- ═══════════════════════════════════ -->
+<!-- PART 1 — SERVER SETUP            -->
+<!-- ═══════════════════════════════════ -->
+<div class="section-divider"></div>
+<h2 id="s1-account"><span class="num">1.1</span>Create Your Hetzner Account <span class="badge required">Required</span></h2>
+<p>Entirely in your browser.</p>
+<div class="step"><div class="step-num">1</div><div class="step-content"><p>Go to <a href="https://console.hetzner.cloud/" target="_blank">console.hetzner.cloud</a> → <strong>Sign Up</strong>.</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p>Enter email, password, verify email.</p></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-content"><p>Hetzner may request ID verification (passport/licence). Normal — takes a few hours to a day.</p></div></div>
+<div class="step"><div class="step-num">4</div><div class="step-content"><p>Add a payment method under <strong>Billing</strong>.</p></div></div>
+<div class="step"><div class="step-num">5</div><div class="step-content"><p><span class="badge recommended">Recommended</span> Enable <strong>Two-Factor Authentication</strong> in account settings.</p></div></div>
+<div class="callout success"><span class="icon">🎁</span><div>Hetzner often offers <strong>€20 free credit</strong> for new accounts.</div></div>
+
+<!-- ══════════ 1.2 SSH KEYS ══════════ -->
+<h2 id="s1-ssh"><span class="num">1.2</span>Generate SSH Keys <span class="badge recommended">Recommended</span></h2>
+<p>SSH keys let your computer prove its identity cryptographically instead of using a password.</p>
+<div class="callout tip"><span class="icon">💡</span><div><strong>Can I skip this?</strong> If you'll only use the Hetzner Web Console, you can skip SSH keys. Hetzner will email you a root password instead. However, SSH keys are much more secure — password login is a common attack vector.</div></div>
+
+<h3>What are SSH keys?</h3>
+<div class="card">
+  <p>🔑 <strong>Private key</strong> — stays on YOUR computer only. Never share this.</p>
+  <p style="margin:0;">🔓 <strong>Public key</strong> — goes on the server. Anyone can see it, but only your private key unlocks it.</p>
+</div>
+
+<h3>Generate the key pair</h3>
+<p>On your <strong>local computer</strong> (not the server), open your terminal:</p>
+<div class="code-wrap"><pre><span class="cmd">ssh-keygen</span> <span class="flag">-t ed25519</span> <span class="flag">-C</span> <span class="string">"your-email@example.com"</span></pre></div>
+<p>Press Enter for default location, then set a passphrase (or Enter for none).</p>
+<p>View the public key:</p>
+<div class="code-wrap"><pre><span class="cmd">cat</span> ~/.ssh/id_ed25519.pub</pre></div>
+<p>Copy the entire output line.</p>
+
+<h3>Add to Hetzner (browser)</h3>
+<p>Hetzner Cloud Console → your project → <strong>Security</strong> → <strong>SSH Keys</strong> → <strong>Add SSH Key</strong> → paste your public key.</p>
+
+<div class="console-alt">
+  <div class="console-label">🖥️ Web Console users (skipping SSH keys)</div>
+  <p style="margin:0;">Don't select any SSH key when creating your server. Hetzner will generate a root password and show it on-screen / email it. <strong>Change this password immediately</strong> after first login by typing <code>passwd</code>.</p>
+</div>
+
+<!-- ══════════ 1.3 CREATE SERVER ══════════ -->
+<h2 id="s1-create"><span class="num">1.3</span>Create Your Server <span class="badge required">Required</span></h2>
+<p>Entirely in your browser via Hetzner Cloud Console. Make sure you're inside the <a href="#h-projects">right Project</a> before clicking Add Server — resources are project-scoped and can't be moved between projects later.</p>
+
+<div class="callout tip"><span class="icon">📖</span><div>Every field below maps to a concept explained above: <a href="#h-locations">Location</a> · <a href="#h-images">Image</a> · <a href="#h-types">Type</a> · <a href="#h-ipv4-ipv6">Networking (IPv4/IPv6)</a> · <a href="#h-networks">Private Networks</a> · <a href="#h-placement">Placement Groups</a> · <a href="#h-cloudinit">Cloud config</a> · <a href="#h-labels">Labels</a>. Scroll back up if any term is unclear.</div></div>
+<div class="step"><div class="step-num">1</div><div class="step-content"><p>Click <strong>Add Server</strong>.</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p><span class="badge required">Required</span> <strong>Location:</strong> Choose closest to your audience (Falkenstein, Nuremberg, Helsinki, Ashburn, or Hillsboro).</p></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-content"><p><span class="badge required">Required</span> <strong>Image:</strong> Select <strong>Ubuntu 24.04</strong>.</p></div></div>
+<div class="step"><div class="step-num">4</div><div class="step-content"><p><span class="badge required">Required</span> <strong>Type:</strong> <strong>CX22</strong> (2 vCPU, 4 GB RAM, ~€4.50/mo) or <strong>CPX21</strong> (3 vCPU AMD, ~€8/mo). You can upgrade later without data loss.</p></div></div>
+<div class="step"><div class="step-num">5</div><div class="step-content"><p><span class="badge required">Required</span> <strong>Networking:</strong> Leave defaults (Public IPv4 + IPv6).</p></div></div>
+<div class="step"><div class="step-num">6</div><div class="step-content"><p><span class="badge recommended">Recommended</span> <strong>SSH Key:</strong> Select your key from 1.2. If you skipped, leave blank.</p></div></div>
+<div class="step"><div class="step-num">7</div><div class="step-content"><p><span class="badge optional">Optional</span> <strong>Firewall:</strong> Create a Cloud Firewall (SSH 22, HTTP 80, HTTPS 443). Can be done later via UFW.</p></div></div>
+<div class="step"><div class="step-num">8</div><div class="step-content"><p><span class="badge optional">Optional</span> <strong>Name:</strong> e.g. <code>web-server-01</code>.</p></div></div>
+<div class="step"><div class="step-num">9</div><div class="step-content"><p>Click <strong>Create & Buy Now</strong>. Ready in ~30 seconds.</p></div></div>
+<div class="callout success"><span class="icon">✅</span><div>Note your server's <strong>IPv4 address</strong> (e.g. <code>168.119.xxx.xxx</code>) — you'll need it everywhere.</div></div>
+
+<!-- ══════════ 1.4 CONNECT ══════════ -->
+<h2 id="s1-connect"><span class="num">1.4</span>Connect to Your Server <span class="badge required">Required</span></h2>
+
+<h3>Method A: Hetzner Web Console (browser)</h3>
+<div class="step"><div class="step-num">1</div><div class="step-content"><p>Click your server name in the Hetzner dashboard.</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p>Click the <strong>terminal icon</strong> (<code>>_</code>) — top-right of the page.</p></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-content"><p>A black terminal opens in a new tab. Click inside it, press Enter.</p></div></div>
+<div class="step"><div class="step-num">4</div><div class="step-content">
+  <p>Log in as <code>root</code>. If you used SSH keys, no password needed. If you skipped SSH keys, enter the password Hetzner emailed you.</p>
+</div></div>
+<div class="callout tip"><span class="icon">💡</span><div><strong>Pasting in Web Console:</strong> Use <strong>Ctrl+Shift+V</strong> or right-click → Paste.</div></div>
+
+<h3>Method B: Local terminal (SSH)</h3>
+<div class="code-wrap"><pre><span class="cmd">ssh</span> root@<span class="string">YOUR_SERVER_IP</span></pre></div>
+<p>First time: type <code>yes</code> when asked about host authenticity.</p>
+
+<h3>First thing: update everything <span class="badge required">Required</span></h3>
+<div class="code-wrap"><pre><span class="cmd">apt update</span> && <span class="cmd">apt upgrade</span> <span class="flag">-y</span></pre></div>
+<p>This installs all security patches. Takes a minute or two.</p>
+
+<!-- ══════════ 1.5 SECURE ══════════ -->
+<h2 id="s1-secure"><span class="num">1.5</span>Secure the Server <span class="badge recommended">Recommended</span></h2>
+<div class="callout tip"><span class="icon">💡</span><div><strong>Can I skip this?</strong> For CloudPanel (Path B), creating a separate user is optional since CloudPanel manages its own isolation. For Path A, this is strongly recommended.</div></div>
+
+<h3>Create a non-root user</h3>
+<div class="code-wrap"><pre><span class="comment"># Create user (replace "deploy" with any name you like)</span>
+<span class="cmd">adduser</span> deploy
+
+<span class="comment"># Give them admin privileges</span>
+<span class="cmd">usermod</span> <span class="flag">-aG</span> sudo deploy</pre></div>
+<p>Set a strong password. Skip optional info by pressing Enter.</p>
+
+<h3>Copy your SSH key to the new user <span class="badge recommended">Recommended</span></h3>
+<p>Only needed if you set up SSH keys:</p>
+<div class="code-wrap"><pre><span class="cmd">mkdir</span> <span class="flag">-p</span> /home/deploy/.ssh
+<span class="cmd">cp</span> /root/.ssh/authorized_keys /home/deploy/.ssh/
+<span class="cmd">chown</span> <span class="flag">-R</span> deploy:deploy /home/deploy/.ssh
+<span class="cmd">chmod</span> 700 /home/deploy/.ssh
+<span class="cmd">chmod</span> 600 /home/deploy/.ssh/authorized_keys</pre></div>
+
+<h3>Test the new user <span class="badge required">Required before disabling root</span></h3>
+<div class="console-alt">
+  <div class="console-label">🖥️ Web Console users</div>
+  <p style="margin:0;">Open a <strong>second Web Console tab</strong> (click the terminal icon again). Log in as <code>deploy</code> with your password. Type <code>sudo whoami</code> — should output <code>root</code>.</p>
+</div>
+<p>Or from a local terminal, open a new window:</p>
+<div class="code-wrap"><pre><span class="cmd">ssh</span> deploy@<span class="string">YOUR_SERVER_IP</span>
+<span class="cmd">sudo</span> whoami    <span class="comment"># should output: root</span></pre></div>
+
+<div class="callout danger"><span class="icon">🚨</span><div><strong>Do NOT disable root login</strong> until you've confirmed the new user works with sudo. Otherwise you could lock yourself out permanently.</div></div>
+
+<h3>Disable root login & password auth <span class="badge recommended">Recommended</span></h3>
+<div class="code-wrap"><pre><span class="cmd">nano</span> /etc/ssh/sshd_config</pre></div>
+<p>Find and change (Ctrl+W to search):</p>
+<div class="code-wrap"><pre>PermitRootLogin <span class="string">no</span>
+PasswordAuthentication <span class="string">no</span></pre></div>
+<p>Remove <code>#</code> from the beginning of the line if present. Save: <strong>Ctrl+X</strong> → <strong>Y</strong> → <strong>Enter</strong>.</p>
+<div class="code-wrap"><pre><span class="cmd">systemctl</span> restart sshd</pre></div>
+
+<div class="console-alt">
+  <div class="console-label">🖥️ Web Console users</div>
+  <p style="margin:0;">If you skipped SSH keys, do <strong>NOT</strong> set <code>PasswordAuthentication no</code> — that locks out SSH entirely. You can still set <code>PermitRootLogin no</code> as long as your deploy user works, because the Web Console bypasses SSH.</p>
+</div>
+
+<!-- ══════════ 1.6 FIREWALL ══════════ -->
+<h2 id="s1-firewall"><span class="num">1.6</span>Firewall Setup (UFW) <span class="badge recommended">Recommended</span></h2>
+<div class="code-wrap"><pre><span class="cmd">sudo ufw default deny incoming</span>
+<span class="cmd">sudo ufw default allow outgoing</span>
+
+<span class="comment"># CRITICAL — allow SSH before enabling!</span>
+<span class="cmd">sudo ufw allow</span> OpenSSH
+<span class="cmd">sudo ufw allow</span> 80/tcp
+<span class="cmd">sudo ufw allow</span> 443/tcp
+
+<span class="comment"># CloudPanel users: also allow port 8443</span>
+<span class="cmd">sudo ufw allow</span> 8443/tcp
+
+<span class="cmd">sudo ufw enable</span>
+<span class="cmd">sudo ufw status verbose</span></pre></div>
+
+<div class="callout danger"><span class="icon">🚨</span><div>Forgot SSH before enabling? The <strong>Hetzner Web Console always works</strong> (it bypasses SSH), so you can fix it from the browser.</div></div>
+
+<!-- ══════════ 1.7 FAIL2BAN ══════════ -->
+<h2 id="s1-fail2ban"><span class="num">1.7</span>Install Fail2Ban <span class="badge recommended">Recommended</span></h2>
+<p>Auto-bans IPs that try too many failed logins.</p>
+<div class="code-wrap"><pre><span class="cmd">sudo apt install</span> <span class="flag">-y</span> fail2ban
+<span class="cmd">sudo cp</span> /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+<span class="cmd">sudo systemctl enable</span> fail2ban
+<span class="cmd">sudo systemctl start</span> fail2ban
+<span class="cmd">sudo fail2ban-client status</span></pre></div>
+
+<!-- ══════════ 1.8 AUTO UPDATES ══════════ -->
+<h2 id="s1-updates"><span class="num">1.8</span>Automatic Security Updates <span class="badge recommended">Recommended</span></h2>
+<div class="code-wrap"><pre><span class="cmd">sudo apt install</span> <span class="flag">-y</span> unattended-upgrades
+<span class="cmd">sudo dpkg-reconfigure</span> <span class="flag">--priority=low</span> unattended-upgrades</pre></div>
+<p>Select <strong>Yes</strong>. Critical patches will now auto-apply.</p>
+
+<!-- ══════════ 1.9 BASIC MONITORING ══════════ -->
+<h2 id="s1-monitoring"><span class="num">1.9</span>Basic Monitoring <span class="badge optional">Optional</span></h2>
+<p>Give yourself visibility into your server's health. Two commands to remember:</p>
+
+<div class="code-wrap"><pre><span class="comment"># Install htop — a visual process/CPU/memory monitor</span>
+<span class="cmd">sudo apt install</span> <span class="flag">-y</span> htop
+
+<span class="comment"># Run it (press 'q' to exit)</span>
+<span class="cmd">htop</span></pre></div>
+
+<div class="code-wrap"><pre><span class="comment"># Check disk space</span>
+<span class="cmd">df</span> <span class="flag">-h</span>
+
+<span class="comment"># Check memory usage</span>
+<span class="cmd">free</span> <span class="flag">-h</span></pre></div>
+
+<p>That's it. Run these occasionally to make sure your server isn't running out of disk or memory. If disk usage is above 85%, it's time to clean up or upgrade.</p>
+
+<!-- ══════════ HARDENING CHECKLIST ══════════ -->
+<h2 id="s1-checklist"><span class="num">🔐</span>Quick Hardening Checklist</h2>
+<p>Before moving on to Part 2, tick everything off. This is your TL;DR safety net — go back and fix anything unchecked.</p>
+
+<div class="checklist">
+  <h4>Server Security Checklist</h4>
+  <div class="check-item"><input type="checkbox" id="chk1"><label for="chk1">System updated (<code>apt update && apt upgrade</code>)</label><span class="badge required check-badge">Required</span></div>
+  <div class="check-item"><input type="checkbox" id="chk2"><label for="chk2">Non-root user created with sudo privileges</label><span class="badge recommended check-badge">Recommended</span></div>
+  <div class="check-item"><input type="checkbox" id="chk3"><label for="chk3">SSH keys set up and working</label><span class="badge recommended check-badge">Recommended</span></div>
+  <div class="check-item"><input type="checkbox" id="chk4"><label for="chk4">Root login disabled (<code>PermitRootLogin no</code>)</label><span class="badge recommended check-badge">Recommended</span></div>
+  <div class="check-item"><input type="checkbox" id="chk5"><label for="chk5">Password authentication disabled (if keys used)</label><span class="badge recommended check-badge">Recommended</span></div>
+  <div class="check-item"><input type="checkbox" id="chk6"><label for="chk6">UFW firewall enabled and active</label><span class="badge recommended check-badge">Recommended</span></div>
+  <div class="check-item"><input type="checkbox" id="chk7"><label for="chk7">Fail2Ban installed and running</label><span class="badge recommended check-badge">Recommended</span></div>
+  <div class="check-item"><input type="checkbox" id="chk8"><label for="chk8">Automatic security updates enabled</label><span class="badge recommended check-badge">Recommended</span></div>
+  <div class="check-item"><input type="checkbox" id="chk9"><label for="chk9">Can still SSH in (or access via Web Console)</label><span class="badge required check-badge">Required</span></div>
+</div>
+
+<div class="callout success"><span class="icon">🎉</span><div><strong>Part 1 Complete!</strong> Choose your path: <a href="#s2-nginx">Path A (Manual LEMP)</a> or <a href="#cp-install">Path B (CloudPanel)</a>.</div></div>
+
+
+<!-- ═══════════════════════════════════ -->
+<!-- PART 2A — MANUAL LEMP             -->
+<!-- ═══════════════════════════════════ -->
+<div class="section-divider"></div>
+<h2 id="s2-nginx"><span class="num">2.1</span>Install NGINX <span class="badge path-a">Path A</span> <span class="badge required">Required</span></h2>
+<div class="code-wrap"><pre><span class="cmd">sudo apt install</span> <span class="flag">-y</span> nginx
+<span class="cmd">sudo systemctl start</span> nginx
+<span class="cmd">sudo systemctl enable</span> nginx
+<span class="cmd">sudo systemctl status</span> nginx</pre></div>
+<p>Visit <code>http://YOUR_SERVER_IP</code> in your browser. You should see the NGINX welcome page.</p>
+
+<h2 id="s2-php"><span class="num">2.2</span>Install PHP <span class="badge path-a">Path A</span> <span class="badge required">Required for WordPress</span></h2>
+<div class="code-wrap"><pre><span class="cmd">sudo apt install</span> <span class="flag">-y</span> php-fpm php-mysql php-curl php-gd php-intl \
+  php-mbstring php-soap php-xml php-xmlrpc php-zip php-imagick php-cli</pre></div>
+<div class="code-wrap"><pre><span class="cmd">php</span> <span class="flag">-v</span>
+<span class="comment"># Note the version (e.g. 8.3) — you'll need this later</span></pre></div>
+
+<h2 id="s2-mysql"><span class="num">2.3</span>Install MariaDB <span class="badge path-a">Path A</span> <span class="badge required">Required for WordPress</span></h2>
+<div class="code-wrap"><pre><span class="cmd">sudo apt install</span> <span class="flag">-y</span> mariadb-server
+<span class="cmd">sudo mysql_secure_installation</span></pre></div>
+<div class="card">
+  <p><strong>Switch to unix_socket auth?</strong> → <code>n</code> · <strong>Change root password?</strong> → <code>Y</code> (set a strong one) · <strong>Remove anonymous users?</strong> → <code>Y</code> · <strong>Disallow root login remotely?</strong> → <code>Y</code> · <strong>Remove test database?</strong> → <code>Y</code> · <strong>Reload privilege tables?</strong> → <code>Y</code></p>
+</div>
+
+<h3>Create a database for WordPress <span class="badge required">Required</span></h3>
+<div class="code-wrap"><pre><span class="cmd">sudo mysql</span>
+
+<span class="kw">CREATE DATABASE</span> wordpress_db;
+<span class="kw">CREATE USER</span> <span class="string">'wp_user'</span>@<span class="string">'localhost'</span> <span class="kw">IDENTIFIED BY</span> <span class="string">'YOUR_STRONG_PASSWORD_HERE'</span>;
+<span class="kw">GRANT ALL PRIVILEGES ON</span> wordpress_db.* <span class="kw">TO</span> <span class="string">'wp_user'</span>@<span class="string">'localhost'</span>;
+<span class="kw">FLUSH PRIVILEGES</span>;
+<span class="kw">EXIT</span>;</pre></div>
+
+<!-- ══════════ 2.4 CLOUDFLARE DNS ══════════ -->
+<h2 id="s2-domain-cf"><span class="num">2.4</span>Cloudflare DNS Setup <span class="badge required">Required</span></h2>
+<p>Entirely in your browser — Cloudflare Dashboard.</p>
+
+<h3>Main domain</h3>
+<table class="dns-table">
+  <tr><th>Type</th><th>Name</th><th>Content</th><th>Proxy</th><th>TTL</th></tr>
+  <tr><td class="type">A</td><td class="name-col">@</td><td class="val">YOUR_SERVER_IP</td><td>Proxied (orange)</td><td>Auto</td></tr>
+  <tr><td class="type">A</td><td class="name-col">www</td><td class="val">YOUR_SERVER_IP</td><td>Proxied (orange)</td><td>Auto</td></tr>
+</table>
+
+<h3>Subdomains</h3>
+<table class="dns-table">
+  <tr><th>Type</th><th>Name</th><th>Content</th><th>Proxy</th><th>TTL</th></tr>
+  <tr><td class="type">A</td><td class="name-col">blog</td><td class="val">YOUR_SERVER_IP</td><td>Proxied</td><td>Auto</td></tr>
+</table>
+<p>One A record per subdomain. All point to the same IP.</p>
+
+<h3>Additional domains</h3>
+<p>For a different domain on Cloudflare: same A records (<code>@</code> and <code>www</code>), same server IP. One server = unlimited domains.</p>
+
+<div class="callout tip"><span class="icon">💡</span><div><strong>Proxied (orange)</strong> = traffic through Cloudflare CDN/DDoS. <strong>DNS only (grey)</strong> = direct to server. Use Proxied for websites, DNS only for SSH or non-web services.</div></div>
+
+<!-- ══════════ 2.5 NGINX VHOSTS ══════════ -->
+<h2 id="s2-vhost"><span class="num">2.5</span>NGINX Virtual Hosts <span class="badge path-a">Path A</span> <span class="badge required">Required</span></h2>
+<div class="code-wrap"><pre><span class="cmd">sudo mkdir</span> <span class="flag">-p</span> /var/www/example.com/public_html
+<span class="cmd">sudo chown</span> <span class="flag">-R</span> deploy:deploy /var/www/example.com
+<span class="cmd">sudo chmod</span> <span class="flag">-R</span> 755 /var/www/example.com</pre></div>
+
+<div class="code-wrap"><pre><span class="cmd">sudo nano</span> /etc/nginx/sites-available/example.com</pre></div>
+<p>Paste:</p>
+<div class="code-wrap"><pre>server {
+    listen 80;
+    listen [::]:80;
+    server_name example.com www.example.com;
+    root /var/www/example.com/public_html;
+    index index.php index.html index.htm;
+
+    access_log /var/log/nginx/example.com.access.log;
+    error_log  /var/log/nginx/example.com.error.log;
+
+    location / {
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\. { deny all; }
+
+    location ~* \.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2)$ {
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+    }
+}</pre></div>
+<div class="callout warn"><span class="icon">⚠️</span><div>Replace <code>example.com</code> with your domain. Match the PHP version: if <code>php -v</code> showed 8.1, use <code>php8.1-fpm.sock</code>.</div></div>
+
+<h3>Enable the site</h3>
+<div class="code-wrap"><pre><span class="cmd">sudo ln</span> <span class="flag">-s</span> /etc/nginx/sites-available/example.com /etc/nginx/sites-enabled/
+<span class="cmd">sudo rm</span> /etc/nginx/sites-enabled/default
+<span class="cmd">sudo nginx</span> <span class="flag">-t</span>      <span class="comment"># ALWAYS test before reloading</span>
+<span class="cmd">sudo systemctl reload</span> nginx</pre></div>
+
+<!-- ══════════ 2.6 SSL ══════════ -->
+<h2 id="s2-ssl"><span class="num">2.6</span>SSL Certificates <span class="badge path-a">Path A</span> <span class="badge required">Required</span></h2>
+
+<h3>Option 1: Cloudflare handles SSL (easiest) <span class="badge recommended">Recommended</span></h3>
+<p>If DNS is Proxied: Cloudflare Dashboard → SSL/TLS → set mode to <strong>Full</strong>. Done. No terminal needed.</p>
+
+<h3>Option 2: Let's Encrypt <span class="badge optional">Optional</span></h3>
+<p>Temporarily set Cloudflare DNS to grey cloud (DNS only), then:</p>
+<div class="code-wrap"><pre><span class="cmd">sudo apt install</span> <span class="flag">-y</span> certbot python3-certbot-nginx
+<span class="cmd">sudo certbot</span> <span class="flag">--nginx</span> <span class="flag">-d</span> example.com <span class="flag">-d</span> www.example.com
+<span class="cmd">sudo certbot renew</span> <span class="flag">--dry-run</span>    <span class="comment"># test auto-renewal</span></pre></div>
+<p>Switch Cloudflare back to Proxied after. Set SSL mode to <strong>Full (strict)</strong>.</p>
+
+<!-- ══════════ 2.7 WORDPRESS ══════════ -->
+<h2 id="s2-wp"><span class="num">2.7</span>Install WordPress <span class="badge path-a">Path A</span> <span class="badge required">Required</span></h2>
+<div class="code-wrap"><pre><span class="cmd">cd</span> /var/www/example.com/public_html
+<span class="cmd">sudo wget</span> https://wordpress.org/latest.tar.gz
+<span class="cmd">sudo tar</span> <span class="flag">-xzf</span> latest.tar.gz
+<span class="cmd">sudo mv</span> wordpress/* .
+<span class="cmd">sudo rm</span> <span class="flag">-rf</span> wordpress latest.tar.gz
+<span class="cmd">sudo chown</span> <span class="flag">-R</span> www-data:www-data /var/www/example.com/public_html
+<span class="cmd">sudo find</span> /var/www/example.com/public_html <span class="flag">-type d -exec chmod</span> 755 {} \;
+<span class="cmd">sudo find</span> /var/www/example.com/public_html <span class="flag">-type f -exec chmod</span> 644 {} \;</pre></div>
+<p>Now visit your domain in a browser — the WordPress wizard appears. Enter your database details from section 2.3.</p>
+
+<!-- ══════════ 2.8 MULTI SITES ══════════ -->
+<h2 id="s2-multi"><span class="num">2.8</span>Multiple Sites & Subdomains <span class="badge path-a">Path A</span> <span class="badge optional">Optional — when needed</span></h2>
+<p>Repeat the same process for each new site:</p>
+<div class="code-wrap"><pre><span class="comment"># 1. Create directory</span>
+<span class="cmd">sudo mkdir</span> <span class="flag">-p</span> /var/www/newdomain.com/public_html
+
+<span class="comment"># 2. Copy & edit NGINX config</span>
+<span class="cmd">sudo cp</span> /etc/nginx/sites-available/example.com /etc/nginx/sites-available/newdomain.com
+<span class="cmd">sudo nano</span> /etc/nginx/sites-available/newdomain.com
+<span class="comment"># Change: server_name, root, log paths</span>
+
+<span class="comment"># 3. Enable, test, reload</span>
+<span class="cmd">sudo ln</span> <span class="flag">-s</span> /etc/nginx/sites-available/newdomain.com /etc/nginx/sites-enabled/
+<span class="cmd">sudo nginx</span> <span class="flag">-t</span>
+<span class="cmd">sudo systemctl reload</span> nginx
+
+<span class="comment"># 4. Add DNS in Cloudflare (browser)</span>
+<span class="comment"># 5. Create database if WordPress (sudo mysql → CREATE DATABASE...)</span></pre></div>
+<p>Subdomains work identically — <code>server_name blog.example.com;</code> + A record in Cloudflare (<code>blog</code> → your IP).</p>
+
+<!-- ══════════ 2.9 NON-WP ══════════ -->
+<h2 id="s2-static"><span class="num">2.9</span>Non-WordPress Sites <span class="badge path-a">Path A</span> <span class="badge optional">Optional</span></h2>
+<h3>Static HTML — simplified config (no PHP block)</h3>
+<div class="code-wrap"><pre>server {
+    listen 80;
+    server_name static-site.com www.static-site.com;
+    root /var/www/static-site.com/public_html;
+    index index.html;
+    location / { try_files $uri $uri/ =404; }
+    location ~* \.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2)$ { expires 30d; }
+}</pre></div>
+
+<h3>Node.js — reverse proxy</h3>
+<div class="code-wrap"><pre>server {
+    listen 80;
+    server_name app.example.com;
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}</pre></div>
+
+
+<!-- ═══════════════════════════════════ -->
+<!-- PART 2B — CLOUDPANEL              -->
+<!-- ═══════════════════════════════════ -->
+<div class="section-divider"></div>
+<h2 id="cp-install"><span class="num">3.1</span>Install CloudPanel <span class="badge path-b">Path B</span> <span class="badge required">Required</span></h2>
+<p>Free, open-source hosting panel. One-time terminal install, then <strong>everything else is browser-based</strong>.</p>
+<div class="callout warn"><span class="icon">⚠️</span><div><strong>Requires a fresh server.</strong> If you followed Path A, create a new server or rebuild.</div></div>
+
+<div class="code-wrap"><pre><span class="cmd">apt update</span> && <span class="cmd">apt</span> <span class="flag">-y</span> upgrade && <span class="cmd">apt</span> <span class="flag">-y</span> install curl wget sudo</pre></div>
+
+<h4>MariaDB 11.4 <span class="badge recommended">Recommended</span></h4>
+<div class="code-wrap"><pre><span class="cmd">curl</span> <span class="flag">-sS</span> https://installer.cloudpanel.io/ce/v2/install.sh <span class="flag">-o</span> install.sh; \
+echo "19cfa702e7936a79e47812ff57d9859175ea902c62a68b2c15ccd1ebaf36caeb install.sh" | \
+sha256sum -c && sudo <span class="string">CLOUD=hetzner</span> <span class="string">DB_ENGINE=MARIADB_11.4</span> bash install.sh</pre></div>
+
+<h4>MySQL 8.0 (alternative)</h4>
+<div class="code-wrap"><pre><span class="cmd">curl</span> <span class="flag">-sS</span> https://installer.cloudpanel.io/ce/v2/install.sh <span class="flag">-o</span> install.sh; \
+echo "19cfa702e7936a79e47812ff57d9859175ea902c62a68b2c15ccd1ebaf36caeb install.sh" | \
+sha256sum -c && sudo <span class="string">CLOUD=hetzner</span> <span class="string">DB_ENGINE=MYSQL_8.0</span> bash install.sh</pre></div>
+
+<p>Takes 5–10 minutes. Lots of text scrolling is normal.</p>
+<div class="callout success"><span class="icon">🎉</span><div><strong>This is the last time you need the terminal for Path B.</strong> Everything from here is browser-based.</div></div>
+
+<!-- ══════════ 3.2 FIRST LOGIN ══════════ -->
+<h2 id="cp-access"><span class="num">3.2</span>Access CloudPanel & First Login <span class="badge path-b">Path B</span> <span class="badge required">Required</span></h2>
+<p>Open your browser: <code>https://YOUR_SERVER_IP:8443</code></p>
+<div class="callout warn"><span class="icon">⚠️</span><div>Browser security warning is expected (self-signed cert). Click <strong>Advanced</strong> → <strong>Proceed</strong>.</div></div>
+<div class="step"><div class="step-num">1</div><div class="step-content"><p><span class="badge required">Required</span> Create your admin account immediately.</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p><span class="badge required">Required</span> Log in.</p></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-content"><p><span class="badge recommended">Recommended</span> Enable Two-Factor Authentication: Account → Security.</p></div></div>
+<div class="callout danger"><span class="icon">🚨</span><div><strong>Do this IMMEDIATELY.</strong> CloudPanel is public on port 8443. If you wait, someone else could create the admin account.</div></div>
+
+<!-- ══════════ 3.3–3.9 CLOUDPANEL ══════════ -->
+<h2 id="cp-dns"><span class="num">3.3</span>Cloudflare DNS for CloudPanel <span class="badge path-b">Path B</span> <span class="badge required">Required</span></h2>
+<p>All in your browser.</p>
+<h3>Admin panel access <span class="badge recommended">Recommended</span></h3>
+<table class="dns-table">
+  <tr><th>Type</th><th>Name</th><th>Content</th><th>Proxy</th></tr>
+  <tr><td class="type">A</td><td class="name-col">admin</td><td class="val">YOUR_SERVER_IP</td><td>DNS only (grey)</td></tr>
+</table>
+<p>Then CloudPanel → Admin Area → Settings → set hostname to <code>admin.example.com</code>.</p>
+
+<h3>Your websites <span class="badge required">Required</span></h3>
+<table class="dns-table">
+  <tr><th>Type</th><th>Name</th><th>Content</th><th>Proxy</th></tr>
+  <tr><td class="type">A</td><td class="name-col">@</td><td class="val">YOUR_SERVER_IP</td><td>Proxied (orange)</td></tr>
+  <tr><td class="type">A</td><td class="name-col">www</td><td class="val">YOUR_SERVER_IP</td><td>Proxied (orange)</td></tr>
+</table>
+
+<h2 id="cp-wp"><span class="num">3.4</span>Add a WordPress Site <span class="badge path-b">Path B</span> <span class="badge required">Required</span></h2>
+<p>All in the browser:</p>
+<div class="step"><div class="step-num">1</div><div class="step-content"><p>CloudPanel → <strong>Sites</strong> → <strong>Add Site</strong> → <strong>Create a WordPress Site</strong>.</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p>Enter domain (<code>www.example.com</code>), site title, admin user/password, site user/password.</p></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-content"><p>Click <strong>Create</strong>. CloudPanel auto-installs WordPress, creates the database, and configures NGINX.</p></div></div>
+
+<h2 id="cp-php"><span class="num">3.5</span>Add a PHP or Static Site <span class="badge path-b">Path B</span> <span class="badge optional">Optional</span></h2>
+<p>Sites → Add Site → choose: <strong>PHP App</strong>, <strong>Node.js</strong>, <strong>Python</strong>, or <strong>Static HTML</strong>. Enter domain, configure, Create. Upload files via SFTP (e.g. FileZilla) using the site user credentials.</p>
+
+<h2 id="cp-subdomain"><span class="num">3.6</span>Subdomains <span class="badge path-b">Path B</span> <span class="badge optional">Optional</span></h2>
+<p>Two steps, both in browser:</p>
+<div class="step"><div class="step-num">1</div><div class="step-content"><p><strong>Cloudflare:</strong> A record — <code>blog</code> → YOUR_SERVER_IP, Proxied.</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p><strong>CloudPanel:</strong> Sites → Add Site → <code>blog.example.com</code> → choose type → Create.</p></div></div>
+
+<h2 id="cp-multidomain"><span class="num">3.7</span>Multiple Domains <span class="badge path-b">Path B</span> <span class="badge optional">Optional</span></h2>
+<div class="step"><div class="step-num">1</div><div class="step-content"><p><strong>Cloudflare:</strong> Add domain with A records (<code>@</code>, <code>www</code>) → your server IP.</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p><strong>CloudPanel:</strong> Sites → Add Site → <code>www.otherdomain.com</code> → configure → Create.</p></div></div>
+
+<h2 id="cp-ssl"><span class="num">3.8</span>SSL Certificates <span class="badge path-b">Path B</span> <span class="badge required">Required</span></h2>
+<p>CloudPanel → your site → <strong>SSL/TLS</strong> tab → <strong>Actions</strong> → <strong>New Let's Encrypt Certificate</strong> → Create and Install.</p>
+<div class="callout warn"><span class="icon">⚠️</span><div>If Cloudflare DNS is Proxied, Let's Encrypt can't verify via HTTP. Either: (1) temporarily switch to grey cloud, issue cert, switch back, or (2) just use Cloudflare's SSL (set mode to "Full") and skip Let's Encrypt.</div></div>
+
+<h2 id="cp-backups"><span class="num">3.9</span>Backups & Snapshots <span class="badge path-b">Path B</span> <span class="badge recommended">Recommended</span></h2>
+
+<h3>What gets backed up?</h3>
+<div class="card">
+  <p><strong>Hetzner Snapshots/Backups</strong> — capture the <em>entire server</em>: all files, databases, configs, everything. Like taking a photo of the whole machine. Stored on Hetzner's infrastructure.</p>
+  <p><strong>Database exports</strong> — just the database (posts, pages, settings). Stored as a <code>.sql</code> file wherever you put it.</p>
+  <p style="margin:0;"><strong>For maximum safety:</strong> use Hetzner Backups for "everything" protection, <em>and</em> periodically export databases to a separate location (your local computer, Google Drive, S3, etc.).</p>
+</div>
+
+<h3>Hetzner automatic backups (browser) <span class="badge recommended">Recommended</span></h3>
+<p>Hetzner Cloud Console → your server → <strong>Backups</strong> → <strong>Enable</strong>. Costs ~20% of server price. Creates daily full snapshots.</p>
+
+<h3>CloudPanel + Hetzner API snapshots (browser) <span class="badge optional">Optional</span></h3>
+<div class="step"><div class="step-num">1</div><div class="step-content"><p>Hetzner → Security → API Tokens → Generate (Read & Write).</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p>CloudPanel → Admin Area → Hetzner → Settings → paste token.</p></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-content"><p>Set frequency (e.g. every 6 hours) and retention.</p></div></div>
+
+<h3>Manual database backup (terminal) <span class="badge optional">Optional</span></h3>
+<div class="code-wrap"><pre><span class="comment"># Export a database to a .sql file</span>
+<span class="cmd">mysqldump</span> <span class="flag">-u</span> root <span class="flag">-p</span> wordpress_db > ~/backup_$(date +%F).sql
+
+<span class="comment"># Download to your computer (run on YOUR machine, not the server)</span>
+<span class="cmd">scp</span> deploy@YOUR_SERVER_IP:~/backup_*.sql ~/Downloads/</pre></div>
+<p><strong>How often?</strong> Daily for active sites. Weekly minimum. Always before making big changes (updates, plugin installs, migrations).</p>
+
+
+<!-- ═══════════════════════════════════ -->
+<!-- DAY-TO-DAY SECTIONS               -->
+<!-- ═══════════════════════════════════ -->
+<div class="section-divider"></div>
+
+<h2 id="sftp">Uploading Files to Your Server (SFTP) <span class="badge recommended">Recommended — Know This</span></h2>
+
+<p>SFTP (Secure File Transfer Protocol) is how you upload files to your server — themes, plugins, scripts, images, custom code. It works like drag-and-drop in a visual app. The most popular free SFTP client is <strong>FileZilla</strong>.</p>
+
+<h3>Install FileZilla</h3>
+<p>Download from <a href="https://filezilla-project.org/" target="_blank">filezilla-project.org</a> (free, works on Mac/Windows/Linux). Install it like any other app.</p>
+
+<h3>Connect to your server</h3>
+<p>Open FileZilla and enter the connection details at the top:</p>
+
+<div class="card">
+  <p><strong>Host:</strong> <code>sftp://YOUR_SERVER_IP</code> (note the <code>sftp://</code> prefix — important)</p>
+  <p><strong>Username:</strong> your site user (for CloudPanel, this is the site user you created when adding a site; for Path A, use <code>deploy</code>)</p>
+  <p><strong>Password:</strong> the password for that user</p>
+  <p style="margin:0;"><strong>Port:</strong> <code>22</code></p>
+</div>
+
+<p>Click <strong>Quickconnect</strong>. Accept the host key warning the first time. You'll see your local files on the left and your server files on the right.</p>
+
+<h3>Where to upload files</h3>
+<table>
+  <tr><th>What</th><th>Path (CloudPanel)</th><th>Path (Manual / Path A)</th></tr>
+  <tr><td>WordPress files</td><td><code>/home/cloudpanel/htdocs/www.example.com</code></td><td><code>/var/www/example.com/public_html</code></td></tr>
+  <tr><td>WordPress themes</td><td><code>.../wp-content/themes/</code></td><td><code>.../wp-content/themes/</code></td></tr>
+  <tr><td>WordPress plugins</td><td><code>.../wp-content/plugins/</code></td><td><code>.../wp-content/plugins/</code></td></tr>
+  <tr><td>Custom scripts</td><td><code>/home/cloudpanel/htdocs/www.example.com/scripts/</code></td><td><code>/var/www/example.com/scripts/</code></td></tr>
+</table>
+
+<p>Drag files from the left panel (your computer) to the right panel (the server). FileZilla shows upload progress at the bottom.</p>
+
+<div class="callout tip"><span class="icon">💡</span><div><strong>CloudPanel also has a File Manager</strong> in the browser for quick edits. Go to your site → File Manager. It's basic but works for editing config files or uploading small files without opening FileZilla.</div></div>
+
+<div class="callout warn"><span class="icon">⚠️</span><div><strong>Permission issues after upload?</strong> If WordPress can't read files you uploaded, it's a permissions problem. For CloudPanel, the site user owns the files automatically. For Path A, you may need to run: <code>sudo chown -R www-data:www-data /var/www/example.com/public_html</code></div></div>
+
+
+<!-- ══════════ CRON JOBS ══════════ -->
+<h2 id="cron-jobs">Scheduled Tasks / Cron Jobs <span class="badge optional">Optional — When Needed</span></h2>
+
+<p>Cron jobs let you run tasks automatically on a schedule — daily data refreshes, weekly reports, hourly API calls, database cleanups, or anything else you can express as a command.</p>
+
+<h3>WordPress scheduled tasks</h3>
+<p>WordPress has its own built-in scheduling system (WP-Cron). For most WordPress tasks, you don't need server-level cron at all:</p>
+<div class="step"><div class="step-num">1</div><div class="step-content"><p>Install the <strong>WP Crontrol</strong> plugin from your WordPress admin dashboard (Plugins → Add New → search "WP Crontrol").</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p>Go to <strong>Tools → Cron Events</strong> to see all scheduled tasks and add new ones.</p></div></div>
+<p>This handles things like scheduled posts, cache clearing, backup plugin schedules, and email digests — all from the browser.</p>
+
+<h3>Server-level cron jobs (non-WordPress)</h3>
+<p>For anything outside WordPress — Python scripts, Node.js tasks, shell scripts, API calls — you use server cron jobs.</p>
+
+<h4>CloudPanel (browser) <span class="badge path-b">Path B</span></h4>
+<p>CloudPanel has a built-in cron manager:</p>
+<div class="step"><div class="step-num">1</div><div class="step-content"><p>CloudPanel → your site → <strong>Cron Jobs</strong> tab.</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p>Click <strong>Add Cron Job</strong>.</p></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-content">
+  <p>Set the <strong>schedule</strong> and the <strong>command</strong>:</p>
+  <div class="card" style="margin-top:8px">
+    <p><strong>Minute:</strong> 0 · <strong>Hour:</strong> 6 · <strong>Day:</strong> * · <strong>Month:</strong> * · <strong>Weekday:</strong> * → runs at 6:00 AM every day</p>
+    <p style="margin:0;"><strong>Minute:</strong> */30 · <strong>Hour:</strong> * · <strong>Day:</strong> * · <strong>Month:</strong> * · <strong>Weekday:</strong> * → runs every 30 minutes</p>
+  </div>
+</div></div>
+
+<h4>Common cron job examples</h4>
+<table>
+  <tr><th>Task</th><th>Command</th></tr>
+  <tr><td>Run a Python script</td><td><code>python3 /home/cloudpanel/htdocs/www.example.com/scripts/refresh.py</code></td></tr>
+  <tr><td>Run a Node.js script</td><td><code>node /home/cloudpanel/htdocs/www.example.com/scripts/sync.js</code></td></tr>
+  <tr><td>Run a bash/shell script</td><td><code>bash /home/cloudpanel/htdocs/www.example.com/scripts/cleanup.sh</code></td></tr>
+  <tr><td>Hit a URL / webhook</td><td><code>curl -s https://api.example.com/refresh</code></td></tr>
+  <tr><td>Database backup</td><td><code>mysqldump -u root -p'PASSWORD' wordpress_db > /home/cloudpanel/backups/db_$(date +\%F).sql</code></td></tr>
+</table>
+
+<h4>Manual cron (terminal) <span class="badge path-a">Path A</span></h4>
+<p>If you're on Path A or want to manage cron from the terminal:</p>
+<div class="code-wrap"><pre><span class="comment"># Open the cron editor</span>
+<span class="cmd">crontab</span> <span class="flag">-e</span>
+
+<span class="comment"># Add a line at the bottom. Format: minute hour day month weekday command</span>
+<span class="comment"># Example: run a Python script every day at 6am</span>
+0 6 * * * python3 /var/www/example.com/scripts/refresh.py
+
+<span class="comment"># Example: run every 30 minutes</span>
+*/30 * * * * curl -s https://api.example.com/webhook
+
+<span class="comment"># Save and exit (Ctrl+X → Y → Enter in nano)</span></pre></div>
+
+<div class="callout tip"><span class="icon">💡</span><div><strong>Need a Python library?</strong> If your script uses something like <code>requests</code> or <code>pandas</code>, SSH in once and run <code>sudo pip3 install requests pandas</code>. This is a one-time setup — the cron job will use them automatically after that.</div></div>
+
+<div class="callout warn"><span class="icon">⚠️</span><div><strong>Use full paths in cron.</strong> Don't write <code>python3 script.py</code> — write <code>python3 /full/path/to/script.py</code>. Cron runs in a minimal environment and doesn't know where your files are unless you tell it explicitly.</div></div>
+
+
+<!-- ══════════ EMAIL ══════════ -->
+<h2 id="email">Email & Contact Forms <span class="badge recommended">Recommended — Read This</span></h2>
+
+<p>This catches almost everyone off guard: <strong>your Hetzner server cannot reliably send emails out of the box.</strong> If you install a WordPress contact form plugin (WPForms, Contact Form 7, etc.) and test it, the emails will either never arrive or land in spam.</p>
+
+<h3>Why?</h3>
+<p>Hetzner servers don't come with a mail server configured, and even if they did, emails from new/unknown servers are almost always flagged as spam by Gmail, Outlook, etc. You need a dedicated email service to send reliably.</p>
+
+<h3>The fix: use an SMTP plugin + email service</h3>
+<div class="step"><div class="step-num">1</div><div class="step-content">
+  <p><strong>Choose an email sending service</strong> (all have free tiers):</p>
+  <div class="card" style="margin-top:8px">
+    <p><strong>Brevo (formerly Sendinblue)</strong> — 300 emails/day free. Easy setup. Good for most sites.</p>
+    <p><strong>Mailgun</strong> — 1,000 emails/month free (on Flex plan). Popular with developers.</p>
+    <p><strong>Gmail SMTP</strong> — use your existing Gmail. Limited to ~500/day. Simple but requires app passwords.</p>
+    <p style="margin:0;"><strong>Amazon SES</strong> — 62,000 emails/month free (if sending from EC2, though you'd need to set it up separately from Hetzner). Very cheap beyond that.</p>
+  </div>
+</div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p><strong>Install a WordPress SMTP plugin.</strong> Go to Plugins → Add New → search for <strong>"WP Mail SMTP"</strong> (by WPForms). Install and activate.</p></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-content"><p><strong>Configure it.</strong> WP Mail SMTP → Settings → choose your email service → enter the API key or SMTP credentials from step 1.</p></div></div>
+<div class="step"><div class="step-num">4</div><div class="step-content"><p><strong>Test it.</strong> WP Mail SMTP → Tools → Email Test → send a test email to yourself. Check it arrives in your inbox (not spam).</p></div></div>
+
+<div class="callout tip"><span class="icon">💡</span><div><strong>This applies to ALL WordPress emails</strong> — not just contact forms. Password resets, order confirmations (WooCommerce), notification emails, everything. Without an SMTP plugin, none of these will work reliably.</div></div>
+
+<div class="callout warn"><span class="icon">⚠️</span><div><strong>This is for sending email FROM your site.</strong> If you want a proper email address like <code>hello@yourdomain.com</code> for receiving and sending personal/business email, that's a separate service entirely — use Google Workspace, Zoho Mail (free tier), or Cloudflare Email Routing (free forwarding). Don't try to run your own mail server on Hetzner unless you really know what you're doing.</div></div>
+
+
+<!-- ══════════ REBOOTS & MAINTENANCE ══════════ -->
+<h2 id="reboot">Reboots & Maintenance <span class="badge recommended">Recommended — Read This</span></h2>
+
+<p>Servers occasionally need to restart — after a kernel update, if something hangs, or during Hetzner maintenance windows. Here's what to know.</p>
+
+<h3>Do my sites come back automatically?</h3>
+<div class="card">
+  <p>✅ <strong>Yes</strong> — if services are "enabled" (which they are if you followed this guide). NGINX, PHP-FPM, MariaDB, CloudPanel, and Fail2Ban all start automatically on boot. Your websites will be back online within 30–60 seconds of a reboot.</p>
+  <p style="margin:0;">⚠️ <strong>Exception:</strong> if you're running a Node.js app or custom process that you started manually (e.g. <code>node app.js</code>), it will NOT restart automatically. You'd need a process manager like <strong>PM2</strong> to handle that. CloudPanel's Node.js sites handle this for you.</p>
+</div>
+
+<h3>How to reboot</h3>
+<div class="code-wrap"><pre><span class="comment"># Graceful reboot (from terminal or Web Console)</span>
+<span class="cmd">sudo reboot</span></pre></div>
+<p>Or from the browser: Hetzner Cloud Console → your server → <strong>Power</strong> → <strong>Reboot</strong> (soft/graceful) or <strong>Reset</strong> (hard/forced — use only if server is unresponsive).</p>
+
+<h3>Hetzner scheduled maintenance</h3>
+<p>Hetzner occasionally performs maintenance on their physical hardware. They will email you in advance (usually 1–2 weeks notice). During maintenance, your server may be migrated to another physical host — this causes a brief reboot (usually under 5 minutes). Your data and IP address stay the same. No action needed from you.</p>
+
+<h3>When to manually reboot</h3>
+<div class="card">
+  <p>🔄 After a <strong>kernel update</strong> — if <code>apt upgrade</code> says a reboot is required, you'll see a message. Reboot when convenient.</p>
+  <p>🔄 If the server is <strong>unresponsive</strong> — try the Hetzner Cloud Console first. If even the Web Console doesn't respond, use the Power → Reset button in the dashboard.</p>
+  <p style="margin:0;">🔄 After changing <strong>major system settings</strong> — most changes don't need a reboot (just restart the relevant service), but kernel parameters and some package upgrades do.</p>
+</div>
+
+<div class="callout tip"><span class="icon">💡</span><div><strong>Check if a reboot is needed</strong> without actually rebooting: <code>cat /var/run/reboot-required</code>. If the file exists, a reboot is pending. If it says "No such file", you're fine.</div></div>
+
+
+<!-- ═══════════════════════════════════ -->
+<!-- REFERENCE SECTIONS                -->
+<!-- ═══════════════════════════════════ -->
+<div class="section-divider"></div>
+
+<h2 id="cf-settings">Cloudflare Recommended Settings <span class="badge recommended">Recommended</span></h2>
+<p>All done in the Cloudflare dashboard (browser). Applies to both paths.</p>
+
+<h3>Security</h3>
+<table>
+  <tr><th>Setting</th><th>Location</th><th>Value</th></tr>
+  <tr><td>SSL/TLS Mode</td><td>SSL/TLS → Overview</td><td><strong>Full (strict)</strong> if you have Let's Encrypt; <strong>Full</strong> if using Cloudflare SSL only</td></tr>
+  <tr><td>Always Use HTTPS</td><td>SSL/TLS → Edge Certificates</td><td><strong>On</strong></td></tr>
+  <tr><td>Minimum TLS Version</td><td>SSL/TLS → Edge Certificates</td><td><strong>TLS 1.2</strong></td></tr>
+  <tr><td>Automatic HTTPS Rewrites</td><td>SSL/TLS → Edge Certificates</td><td><strong>On</strong></td></tr>
+  <tr><td>Security Level</td><td>Security → Settings</td><td><strong>Medium</strong></td></tr>
+  <tr><td>Bot Fight Mode</td><td>Security → Bots</td><td><strong>On</strong></td></tr>
+</table>
+
+<h3>Speed</h3>
+<table>
+  <tr><th>Setting</th><th>Location</th><th>Value</th></tr>
+  <tr><td>Auto Minify</td><td>Speed → Optimization</td><td><strong>JS, CSS, HTML — all on</strong></td></tr>
+  <tr><td>Brotli Compression</td><td>Speed → Optimization</td><td><strong>On</strong></td></tr>
+</table>
+
+<h3>Caching</h3>
+<table>
+  <tr><th>Setting</th><th>Location</th><th>Value</th></tr>
+  <tr><td>Caching Level</td><td>Caching → Configuration</td><td><strong>Standard</strong></td></tr>
+  <tr><td>Browser Cache TTL</td><td>Caching → Configuration</td><td><strong>Respect Existing Headers</strong></td></tr>
+</table>
+
+<h3>Network</h3>
+<table>
+  <tr><th>Setting</th><th>Location</th><th>Value</th></tr>
+  <tr><td>HTTP/3 (QUIC)</td><td>Network</td><td><strong>On</strong></td></tr>
+  <tr><td>WebSockets</td><td>Network</td><td><strong>On</strong></td></tr>
+</table>
+
+<div class="callout tip"><span class="icon">💡</span><div><strong>"Under Attack" mode:</strong> If you're being DDoS'd, Security → Settings → enable "Under Attack Mode". Shows a challenge page to filter bots. Disable when attack stops.</div></div>
+
+
+<!-- ══════════ TEST EVERYTHING ══════════ -->
+<h2 id="test-everything">Test Everything Works <span class="badge required">Required</span></h2>
+<p>Before calling it done, run through this checklist:</p>
+
+<div class="checklist">
+  <h4>Go-Live Verification</h4>
+  <div class="check-item"><input type="checkbox" id="t1"><label for="t1">Site loads in browser (type your domain — do you see your site?)</label></div>
+  <div class="check-item"><input type="checkbox" id="t2"><label for="t2">HTTPS works (padlock icon in address bar, no warnings)</label></div>
+  <div class="check-item"><input type="checkbox" id="t3"><label for="t3"><code>http://</code> redirects to <code>https://</code> automatically</label></div>
+  <div class="check-item"><input type="checkbox" id="t4"><label for="t4">WordPress admin loads (<code>yourdomain.com/wp-admin</code>)</label></div>
+  <div class="check-item"><input type="checkbox" id="t5"><label for="t5">NGINX config test passes (<code>sudo nginx -t</code>)</label></div>
+  <div class="check-item"><input type="checkbox" id="t6"><label for="t6">Can still SSH in / access via Web Console</label></div>
+  <div class="check-item"><input type="checkbox" id="t7"><label for="t7">Firewall is active (<code>sudo ufw status</code>)</label></div>
+  <div class="check-item"><input type="checkbox" id="t8"><label for="t8"><code>www</code> and non-<code>www</code> both work (one should redirect to the other)</label></div>
+  <div class="check-item"><input type="checkbox" id="t9"><label for="t9">Subdomains load (if configured)</label></div>
+</div>
+
+<div class="callout tip"><span class="icon">💡</span><div><strong>DNS not working yet?</strong> New DNS records can take up to 24–48 hours to propagate worldwide, though Cloudflare is usually under 5 minutes. Be patient. Use <a href="https://dnschecker.org" target="_blank">dnschecker.org</a> to check propagation status.</div></div>
+
+
+<!-- ══════════ COMMON MISTAKES ══════════ -->
+<h2 id="common-mistakes">Common Mistakes <span class="badge recommended">Recommended — Read This</span></h2>
+<p>These will save you hours of frustration. Every one of these is something real beginners hit regularly.</p>
+
+<div class="card">
+  <div class="mistake">
+    <div class="mistake-title">DNS not propagated yet</div>
+    <div class="mistake-fix">You added DNS records but the site doesn't load. <strong>Fix:</strong> wait 5–30 minutes (Cloudflare is fast). Check at <a href="https://dnschecker.org" target="_blank">dnschecker.org</a>. Don't keep changing records — that resets the timer.</div>
+  </div>
+  <div class="mistake">
+    <div class="mistake-title">Cloudflare proxy breaking Let's Encrypt</div>
+    <div class="mistake-fix">Let's Encrypt needs to reach your server directly. <strong>Fix:</strong> temporarily set DNS to "DNS only" (grey cloud), issue the cert, then switch back to Proxied.</div>
+  </div>
+  <div class="mistake">
+    <div class="mistake-title">Wrong PHP socket version in NGINX config</div>
+    <div class="mistake-fix">NGINX error: "connect() failed" or 502 Bad Gateway. <strong>Fix:</strong> check <code>php -v</code> and make sure the socket path matches: <code>php8.3-fpm.sock</code> vs <code>php8.1-fpm.sock</code>.</div>
+  </div>
+  <div class="mistake">
+    <div class="mistake-title">Forgot to reload NGINX after config changes</div>
+    <div class="mistake-fix">You edited a config but nothing changed. <strong>Fix:</strong> always run <code>sudo nginx -t</code> then <code>sudo systemctl reload nginx</code> after any config change.</div>
+  </div>
+  <div class="mistake">
+    <div class="mistake-title">File permissions wrong (www-data vs deploy)</div>
+    <div class="mistake-fix">WordPress can't upload images, install plugins, or update. <strong>Fix:</strong> <code>sudo chown -R www-data:www-data /var/www/yoursite/public_html</code>. NGINX/PHP run as <code>www-data</code>, not your user.</div>
+  </div>
+  <div class="mistake">
+    <div class="mistake-title">Firewall blocking ports</div>
+    <div class="mistake-fix">Site doesn't load but server is running. <strong>Fix:</strong> <code>sudo ufw status</code> — make sure 80 and 443 are listed as ALLOW. For CloudPanel, also 8443.</div>
+  </div>
+  <div class="mistake">
+    <div class="mistake-title">"Too many redirects" loop</div>
+    <div class="mistake-fix">Cloudflare SSL set to "Flexible" while your server also forces HTTPS. <strong>Fix:</strong> set Cloudflare SSL to "Full" (not Flexible).</div>
+  </div>
+  <div class="mistake">
+    <div class="mistake-title">Editing the wrong NGINX file</div>
+    <div class="mistake-fix">Files in <code>sites-available/</code> are templates. Only files linked (symlinked) in <code>sites-enabled/</code> are active. Always check both.</div>
+  </div>
+  <div class="mistake">
+    <div class="mistake-title">Running commands without sudo</div>
+    <div class="mistake-fix">Error: "Permission denied". <strong>Fix:</strong> add <code>sudo</code> before the command. If logged in as root, sudo isn't needed.</div>
+  </div>
+</div>
+
+
+<!-- ══════════ RECONNECT ══════════ -->
+<h2 id="reconnect">How to Reconnect Later <span class="badge recommended">Recommended — Save This</span></h2>
+<p>When you close your terminal and come back tomorrow, here's how to get back in:</p>
+
+<div class="code-wrap"><pre><span class="comment"># From your local terminal:</span>
+<span class="cmd">ssh</span> deploy@<span class="string">YOUR_SERVER_IP</span>
+
+<span class="comment"># Or if you didn't set up a separate user:</span>
+<span class="cmd">ssh</span> root@<span class="string">YOUR_SERVER_IP</span></pre></div>
+
+<div class="card">
+  <p>📌 <strong>Your server IP does not change</strong> unless you delete and recreate the server. You can always find it on the Hetzner Cloud Console dashboard.</p>
+  <p>📌 <strong>The Hetzner Web Console</strong> is always available as a fallback — just click the terminal icon on your server's page in the dashboard.</p>
+  <p style="margin:0;">📌 <strong>Tip:</strong> bookmark <code>ssh deploy@YOUR_IP</code> in a note on your computer so you don't have to look it up every time.</p>
+</div>
+
+
+<!-- ══════════ SCALING ══════════ -->
+<h2 id="scaling">Scaling Later <span class="badge optional">Optional — Read When Ready</span></h2>
+<p>What happens when your sites grow? You have three options, roughly in order of effort:</p>
+
+<div class="card">
+  <p>📈 <strong>Upgrade your server (vertical scaling)</strong> — in the Hetzner dashboard, click your server → <strong>Rescale</strong>. Pick a bigger plan. Takes a quick reboot, no data loss. This handles most growth scenarios.</p>
+  <p>🌐 <strong>Use Cloudflare's CDN more aggressively</strong> — you're already using it. Enable "Cache Everything" page rules for static sites. This offloads traffic from your server. Free.</p>
+  <p>🖥️ <strong>Add more servers (horizontal scaling)</strong> — for high-traffic sites, you can put a load balancer in front of multiple servers. This is advanced and usually only needed if you're getting thousands of concurrent visitors. Hetzner offers load balancers from ~€6/month.</p>
+  <p style="margin:0;">🗄️ <strong>Separate database server</strong> — move MySQL/MariaDB to its own server for better performance. Advanced, but straightforward with Hetzner's private networking.</p>
+</div>
+<p>For most sites, upgrading the server size is all you'll ever need. Don't over-engineer until you have the traffic to justify it.</p>
+
+
+<!-- ══════════ TROUBLESHOOT ══════════ -->
+<h2 id="troubleshoot">Troubleshooting</h2>
+
+<h3>Error 521 (Web server is down)</h3>
+<p>Check NGINX: <code>sudo systemctl status nginx</code>. Check firewall: <code>sudo ufw status</code>. Check IP in Cloudflare matches your server.</p>
+
+<h3>Error 522 (Connection timed out)</h3>
+<p>Server overloaded or ports blocked. Check with <code>htop</code> and <code>sudo ufw status</code>.</p>
+
+<h3>Error 525/526 (SSL handshake failed)</h3>
+<p>Cloudflare SSL mode mismatch. Use "Full" if no server cert, "Full (strict)" if you have Let's Encrypt.</p>
+
+<h3>Can't connect via SSH</h3>
+<p>Use the <strong>Hetzner Web Console</strong> (always works). Check SSH is running: <code>sudo systemctl status sshd</code>. Check firewall: <code>sudo ufw status</code>.</p>
+
+<h3>NGINX shows wrong site</h3>
+<p>Each site needs a unique <code>server_name</code>. Run <code>sudo nginx -t</code> to check for config errors.</p>
+
+<h3>WordPress white screen of death</h3>
+<p>Check PHP error log: <code>sudo tail -50 /var/log/nginx/example.com.error.log</code>. Usually a plugin conflict or memory limit. Edit <code>wp-config.php</code> and add <code>define('WP_DEBUG', true);</code> to see the real error.</p>
+
+
+<!-- ══════════ COMMAND CHEAT SHEET ══════════ -->
+<h2 id="commands">Command Cheat Sheet</h2>
+<table>
+  <tr><th>Task</th><th>Command</th></tr>
+  <tr><td>Connect to server</td><td><code>ssh deploy@YOUR_SERVER_IP</code></td></tr>
+  <tr><td>Update system</td><td><code>sudo apt update && sudo apt upgrade -y</code></td></tr>
+  <tr><td>Restart NGINX</td><td><code>sudo systemctl restart nginx</code></td></tr>
+  <tr><td>Reload NGINX (no downtime)</td><td><code>sudo systemctl reload nginx</code></td></tr>
+  <tr><td>Test NGINX config</td><td><code>sudo nginx -t</code></td></tr>
+  <tr><td>Restart PHP-FPM</td><td><code>sudo systemctl restart php8.3-fpm</code></td></tr>
+  <tr><td>Restart MariaDB</td><td><code>sudo systemctl restart mariadb</code></td></tr>
+  <tr><td>Check disk space</td><td><code>df -h</code></td></tr>
+  <tr><td>Check memory</td><td><code>free -h</code></td></tr>
+  <tr><td>Live process monitor</td><td><code>htop</code> (press q to exit)</td></tr>
+  <tr><td>NGINX error log</td><td><code>sudo tail -50 /var/log/nginx/error.log</code></td></tr>
+  <tr><td>Firewall status</td><td><code>sudo ufw status verbose</code></td></tr>
+  <tr><td>Fail2Ban status</td><td><code>sudo fail2ban-client status sshd</code></td></tr>
+  <tr><td>Renew SSL certs</td><td><code>sudo certbot renew</code></td></tr>
+  <tr><td>Backup database</td><td><code>mysqldump -u root -p db_name > backup.sql</code></td></tr>
+  <tr><td>Restore database</td><td><code>mysql -u root -p db_name < backup.sql</code></td></tr>
+  <tr><td>Cancel current command</td><td><code>Ctrl+C</code></td></tr>
+  <tr><td>Exit nano editor</td><td><code>Ctrl+X → Y → Enter</code></td></tr>
+  <tr><td>Reboot server</td><td><code>sudo reboot</code></td></tr>
+</table>
+
+<div class="callout success" style="margin-top: 48px;">
+  <span class="icon">🎉</span>
+  <div><strong>You're all set!</strong> You now have a complete, secured Hetzner server hosting one or more websites with Cloudflare protection. Remember: keep the server updated, test NGINX configs before reloading, and back up regularly. If anything breaks, check Common Mistakes and Troubleshooting above, or use the Hetzner Web Console as a safety net.</div>
+</div>
+
+</main>
+</div>
+
+<div class="footer-wrap"><footer class="footer">
+  <a href="https://github.com/farhanmunim/hetzner-guide" target="_blank" rel="noopener">GitHub</a>
+  <span class="sep">·</span>
+  <a href="https://buymeacoffee.com/farhan.app" target="_blank" rel="noopener">Support</a>
+  <span class="sep">·</span>
+  <span>Built by <a href="https://farhan.app" target="_blank" rel="noopener">Farhan</a></span>
+</footer></div>
+
+<script>
+  /* ── Theme toggle (light default, persisted) ── */
+  (function () {
+    const root = document.documentElement;
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark') root.setAttribute('data-theme', 'dark');
+    const btn = document.getElementById('themeToggle');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        const isDark = root.getAttribute('data-theme') === 'dark';
+        if (isDark) { root.removeAttribute('data-theme'); localStorage.setItem('theme', 'light'); }
+        else { root.setAttribute('data-theme', 'dark'); localStorage.setItem('theme', 'dark'); }
+      });
+    }
+  })();
+
+  /* ── Wrap tables in scroll containers (mobile overflow fix) ── */
+  document.querySelectorAll('.main table').forEach(t => {
+    if (t.parentElement && t.parentElement.classList.contains('table-wrap')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'table-wrap';
+    t.parentNode.insertBefore(wrap, t);
+    wrap.appendChild(t);
+  });
+
+  /* ── Copy buttons on code blocks ── */
+  document.querySelectorAll('.code-wrap pre').forEach(pre => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.type = 'button';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', () => {
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        btn.textContent = 'Copied';
+        setTimeout(() => btn.textContent = 'Copy', 1500);
+      });
+    });
+    pre.parentNode.appendChild(btn);
+  });
+
+  /* ── Close sidebar on nav click (mobile) ── */
+  document.querySelectorAll('.toc-link').forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 900) document.querySelector('.sidebar').classList.remove('open');
+    });
+  });
+
+  /* ── Active section highlighting in ToC ── */
+  const tocLinks = document.querySelectorAll('.toc-link');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tocLinks.forEach(l => l.classList.remove('active'));
+        const a = document.querySelector(`.toc-link[href="#${entry.target.id}"]`);
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-80px 0px -70% 0px' });
+  document.querySelectorAll('h2[id]').forEach(h2 => observer.observe(h2));
+
+</script>
+</body>
+</html>
