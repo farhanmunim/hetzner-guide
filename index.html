@@ -263,6 +263,7 @@
   }
   .badge.path-a { color: var(--info-fg); background: var(--info-bg); border-color: var(--info-border); }
   .badge.path-b { color: var(--foreground); background: var(--muted); }
+  .badge.path-c { color: var(--success-fg); background: var(--success-bg); border-color: var(--success-border); }
   .badge.required { color: var(--danger-fg); background: var(--danger-bg); border-color: var(--danger-border); }
   .badge.recommended { color: var(--warn-fg); background: var(--warn-bg); border-color: var(--warn-border); }
   .badge.optional { color: var(--muted-foreground); background: transparent; }
@@ -461,6 +462,22 @@
     <a class="toc-link" href="#cp-backups">3.9 Backups</a>
   </div>
   <div class="toc-group">
+    <div class="toc-label">Part 2C — Coolify</div>
+    <a class="toc-link" href="#co-what">4.1 What is Coolify?</a>
+    <a class="toc-link" href="#co-install">4.2 Install Coolify</a>
+    <a class="toc-link" href="#co-access">4.3 First Login</a>
+    <a class="toc-link" href="#co-dns">4.4 Cloudflare DNS</a>
+    <a class="toc-link" href="#co-server">4.5 Connect Your Server</a>
+    <a class="toc-link" href="#co-project">4.6 Projects & Environments</a>
+    <a class="toc-link" href="#co-app">4.7 Deploy Your First App</a>
+    <a class="toc-link" href="#co-oneclick">4.8 One-Click Apps (WordPress, Ghost…)</a>
+    <a class="toc-link" href="#co-db">4.9 Databases</a>
+    <a class="toc-link" href="#co-ssl">4.10 SSL Certificates</a>
+    <a class="toc-link" href="#co-backups">4.11 Backups</a>
+    <a class="toc-link" href="#co-files">4.12 File Management</a>
+    <a class="toc-link" href="#co-security">4.13 Security</a>
+  </div>
+  <div class="toc-group">
     <div class="toc-label">Day-to-Day</div>
     <a class="toc-link" href="#sftp">Uploading Files (SFTP)</a>
     <a class="toc-link" href="#cron-jobs">Scheduled Tasks / Cron</a>
@@ -483,11 +500,11 @@
 
 <!-- ══════════ HERO ══════════ -->
 <h1>Hetzner Cloud — Complete Hosting Guide</h1>
-<p class="hero-sub">From zero to multiple live websites on Hetzner Cloud, with Cloudflare DNS, WordPress, and CloudPanel. Written for someone who has never touched a server before.</p>
+<p class="hero-sub">From zero to multiple live websites on Hetzner Cloud, with Cloudflare DNS, WordPress, CloudPanel, and Coolify. Written for someone who has never touched a server before.</p>
 
 <div class="callout tip">
   <span class="icon">📖</span>
-  <div>This guide covers <strong>two paths</strong>: a manual LEMP stack (NGINX + PHP + MySQL) for full control, and <strong>CloudPanel</strong> for a GUI-based approach. Both use Cloudflare for DNS. Read Part 1 (server setup) first — it applies to both paths.</div>
+  <div>This guide covers <strong>three paths</strong>: a manual LEMP stack (NGINX + PHP + MySQL) for full control, <strong>CloudPanel</strong> for a classic GUI hosting panel, and <strong>Coolify</strong> for a self-hosted Heroku/Vercel-style deploy platform. All three use Cloudflare for DNS. Read Part 1 (server setup) first — it applies to every path.</div>
 </div>
 
 <div class="req-legend">
@@ -537,17 +554,26 @@
   </div>
   <div class="path-option">
     <h4 style="color:var(--purple)">🖥️ Path B — CloudPanel (GUI)</h4>
-    <p>Free control panel. One-time terminal install, then everything else is browser-based. <strong>Best if you prefer not to use the terminal.</strong></p>
+    <p>Free control panel built for traditional hosting (WordPress, PHP apps, static sites). One-time terminal install, then everything else is browser-based. <strong>Best if you mainly want to host WordPress or PHP sites.</strong></p>
+  </div>
+  <div class="path-option">
+    <h4 style="color:var(--success-fg)">🚀 Path C — Coolify (Self-Hosted PaaS)</h4>
+    <p>Open-source, self-hosted alternative to Heroku / Vercel / Netlify. Deploys apps from a Git repo (Node, Python, PHP, static sites), databases, and Docker containers — all from a browser UI. <strong>Best if you want to deploy modern web apps or one-click tools like Ghost, n8n, Plausible, etc.</strong></p>
   </div>
 </div>
 <div class="callout warn">
   <span class="icon">⚠️</span>
-  <div><strong>Choose ONE path.</strong> Don't install a manual LEMP stack and then CloudPanel on the same server — they will conflict.</div>
+  <div><strong>Choose ONE path per server.</strong> Don't mix a manual LEMP stack, CloudPanel, and Coolify on the same server — they fight over ports 80/443 and will conflict. If you want to try multiple, spin up a fresh, cheap Hetzner server for each.</div>
 </div>
 
 <!-- ══════════ TERMINAL OPTIONS ══════════ -->
 <h2 id="terminal-options"><span class="num">03</span>How You'll Type Commands <span class="badge required">Required — Read This</span></h2>
-<p>You'll need to type a handful of commands during initial setup. Pick whichever option you're most comfortable with:</p>
+<p>You'll need to type a handful of commands during initial setup. Pick whichever option you're most comfortable with.</p>
+
+<div class="card">
+  <p>💬 <strong>What's a "terminal"?</strong> A plain text window where you type commands and the computer types back. No mouse, no icons — the whole interaction is lines of text. Don't worry: this guide tells you exactly what to type.</p>
+  <p style="margin:0;">🔐 <strong>What's SSH?</strong> SSH ("Secure Shell") is how your computer talks to your server over the internet, through an encrypted tunnel. You open a terminal on your machine, SSH in, and it feels like you're typing directly on the server.</p>
+</div>
 
 <div class="card">
   <h4 style="margin-top:0;">Option A: Hetzner Web Console (100% browser — no setup needed)</h4>
@@ -567,7 +593,7 @@
 </div>
 <div class="callout tip">
   <span class="icon">💡</span>
-  <div><strong>Our recommendation if you're not familiar with terminals:</strong> Use the <strong>Hetzner Web Console</strong> (Option A). Zero preparation — just click a button. Throughout this guide, <span style="color:var(--purple);">🖥️ Web Console</span> notes flag anything different for browser-console users.</div>
+  <div><strong>New to terminals? Use the Hetzner Web Console (Option A).</strong> Zero setup — click a button in your browser. Throughout this guide, <span style="color:var(--purple);">🖥️ Web Console</span> notes flag anything different for browser-console users.</div>
 </div>
 
 <!-- ══════════ TERMINAL SURVIVAL GUIDE ══════════ -->
@@ -576,7 +602,7 @@
 <p>A few things that will save you a lot of confusion:</p>
 
 <div class="card">
-  <p>🔑 <strong><code>sudo</code></strong> — means "run this command as admin". Most commands in this guide use <code>sudo</code> because they change system settings. If you're logged in as <code>root</code>, you don't need <code>sudo</code> (you're already admin). If logged in as your <code>deploy</code> user, always use <code>sudo</code> for system commands.</p>
+  <p>🔑 <strong><code>sudo</code></strong> — means "run this command as admin". Most commands in this guide use <code>sudo</code> because they change system settings. <strong>root</strong> is the built-in superuser (always admin, no <code>sudo</code> needed). A <strong>sudo user</strong> (like <code>deploy</code>) is a normal user who's allowed to temporarily borrow admin powers by typing <code>sudo</code>. Using a sudo user day-to-day is safer than logging in as root.</p>
   <p>⌨️ <strong>Ctrl+C</strong> — cancels/stops whatever command is currently running. If something hangs or you made a mistake, press <strong>Ctrl+C</strong> to abort and get back to a clean prompt.</p>
   <p>📝 <strong>nano</strong> (the text editor) — when this guide says "edit a file", we use nano. Quick reference: <strong>Ctrl+W</strong> = search, <strong>Ctrl+X</strong> = exit, then <strong>Y</strong> to save, <strong>Enter</strong> to confirm filename. Arrow keys to move around.</p>
   <p>👁️ <strong>Passwords are invisible</strong> — when typing a password in the terminal, nothing appears on screen. No dots, no asterisks, nothing. This is normal. Just type it and press Enter.</p>
@@ -626,8 +652,8 @@
 <div class="card">
   <p><strong>OS images</strong> — plain Ubuntu, Debian, Fedora, Rocky, Alma, CentOS Stream, openSUSE. <strong>Use Ubuntu 24.04 LTS</strong> for this guide.</p>
   <p><strong>Apps</strong> — prebuilt OS + software bundles (Docker, WordPress, LAMP, cPanel, Plesk, GitLab, etc.). Handy but less transparent; this guide prefers installing manually on Ubuntu.</p>
-  <p><strong>Snapshots</strong> — point-in-time images <em>you</em> create from an existing server. Useful for cloning or migrating between locations / architectures.</p>
-  <p style="margin:0;"><strong>Backups</strong> — automatic daily snapshots Hetzner manages for you (enable in the server's Backups tab; ~20% of server price).</p>
+  <p><strong>Snapshots</strong> — point-in-time images <em>you</em> create manually. Kept forever until you delete them. Good for cloning a server or migrating between locations / architectures.</p>
+  <p style="margin:0;"><strong>Backups</strong> — daily snapshots Hetzner takes <em>automatically</em>. Rolling window (only the last 7 are kept). Enable on the server's Backups tab, ~20% of server price. The beginner-friendly "set and forget" option.</p>
 </div>
 
 <h2 id="h-ipv4-ipv6"><span class="num">09</span>IPv4 vs IPv6 <span class="badge recommended">Recommended — Read This</span></h2>
@@ -846,7 +872,7 @@ PasswordAuthentication <span class="string">no</span></pre></div>
 <span class="cmd">sudo ufw enable</span>
 <span class="cmd">sudo ufw status verbose</span></pre></div>
 
-<div class="callout danger"><span class="icon">🚨</span><div>Forgot SSH before enabling? The <strong>Hetzner Web Console always works</strong> (it bypasses SSH), so you can fix it from the browser.</div></div>
+<div class="callout danger"><span class="icon">🚨</span><div>Forgot to allow SSH before enabling UFW? Use the <strong>Hetzner Web Console</strong> from the browser to fix it — it bypasses SSH entirely.</div></div>
 
 <!-- ══════════ 1.7 FAIL2BAN ══════════ -->
 <h2 id="s1-fail2ban"><span class="num">1.7</span>Install Fail2Ban <span class="badge recommended">Recommended</span></h2>
@@ -913,12 +939,18 @@ PasswordAuthentication <span class="string">no</span></pre></div>
 <p>Visit <code>http://YOUR_SERVER_IP</code> in your browser. You should see the NGINX welcome page.</p>
 
 <h2 id="s2-php"><span class="num">2.2</span>Install PHP <span class="badge path-a">Path A</span> <span class="badge required">Required for WordPress</span></h2>
+<div class="card">
+  <p>🐘 <strong>PHP</strong> is the programming language WordPress is written in. <strong>PHP-FPM</strong> ("FastCGI Process Manager") is the background worker that actually runs PHP code when a visitor hits your site. NGINX receives the request and hands any <code>.php</code> file to PHP-FPM via a "socket" — a tiny internal pipe between the two programs.</p>
+</div>
 <div class="code-wrap"><pre><span class="cmd">sudo apt install</span> <span class="flag">-y</span> php-fpm php-mysql php-curl php-gd php-intl \
   php-mbstring php-soap php-xml php-xmlrpc php-zip php-imagick php-cli</pre></div>
 <div class="code-wrap"><pre><span class="cmd">php</span> <span class="flag">-v</span>
 <span class="comment"># Note the version (e.g. 8.3) — you'll need this later</span></pre></div>
 
 <h2 id="s2-mysql"><span class="num">2.3</span>Install MariaDB <span class="badge path-a">Path A</span> <span class="badge required">Required for WordPress</span></h2>
+<div class="card">
+  <p>🗄️ <strong>MariaDB vs MySQL.</strong> A <em>database</em> is where WordPress stores your posts, users, and settings. MySQL is the classic one; MariaDB is a free, drop-in replacement by the original MySQL creators. Pick either — WordPress treats them identically. This guide uses MariaDB because it's the Ubuntu default.</p>
+</div>
 <div class="code-wrap"><pre><span class="cmd">sudo apt install</span> <span class="flag">-y</span> mariadb-server
 <span class="cmd">sudo mysql_secure_installation</span></pre></div>
 <div class="card">
@@ -937,6 +969,15 @@ PasswordAuthentication <span class="string">no</span></pre></div>
 <!-- ══════════ 2.4 CLOUDFLARE DNS ══════════ -->
 <h2 id="s2-domain-cf"><span class="num">2.4</span>Cloudflare DNS Setup <span class="badge required">Required</span></h2>
 <p>Entirely in your browser — Cloudflare Dashboard.</p>
+
+<div class="card">
+  <p>📖 <strong>DNS in one paragraph.</strong> DNS is the internet's phonebook: it turns a name like <code>example.com</code> into an IP address like <code>168.119.12.34</code>. You add records to tell the world where your site lives.</p>
+  <p>📍 <strong>A record</strong> — maps a name to an IPv4 address. This is the one you care about.</p>
+  <p>🏷️ <strong>Name field</strong> — <code>@</code> means the bare domain (<code>example.com</code>). <code>www</code> means <code>www.example.com</code>. <code>blog</code> means <code>blog.example.com</code> (a <strong>subdomain</strong> — any prefix before your main domain).</p>
+  <p>⏱️ <strong>TTL</strong> ("time to live") — how long other computers are allowed to cache this record. "Auto" is fine.</p>
+  <p>🌐 <strong>Nameservers</strong> — the servers that answer DNS questions for your domain. For Cloudflare to manage your DNS, your domain registrar must point at Cloudflare's nameservers (Cloudflare shows you which ones when you add the domain).</p>
+  <p style="margin:0;">⏳ <strong>Propagation</strong> — the wait for your new records to spread across the world. Usually a few minutes on Cloudflare; can take up to 24–48 hours in rare cases.</p>
+</div>
 
 <h3>Main domain</h3>
 <table class="dns-table">
@@ -959,6 +1000,10 @@ PasswordAuthentication <span class="string">no</span></pre></div>
 
 <!-- ══════════ 2.5 NGINX VHOSTS ══════════ -->
 <h2 id="s2-vhost"><span class="num">2.5</span>NGINX Virtual Hosts <span class="badge path-a">Path A</span> <span class="badge required">Required</span></h2>
+<div class="card">
+  <p>🏠 <strong>What's a virtual host?</strong> One server, many websites. A <em>virtual host</em> (or "server block" in NGINX) is a config file that says: "when a request comes in for <code>example.com</code>, serve files from <em>this</em> folder." One file per site — that's how you host multiple domains on a single IP.</p>
+  <p style="margin:0;">📁 <strong>Two folders, one link.</strong> NGINX reads configs from <code>sites-enabled/</code>. You write them in <code>sites-available/</code> and create a symbolic link (like a shortcut) into <code>sites-enabled/</code> to activate them. Unlink to deactivate without deleting.</p>
+</div>
 <div class="code-wrap"><pre><span class="cmd">sudo mkdir</span> <span class="flag">-p</span> /var/www/example.com/public_html
 <span class="cmd">sudo chown</span> <span class="flag">-R</span> deploy:deploy /var/www/example.com
 <span class="cmd">sudo chmod</span> <span class="flag">-R</span> 755 /var/www/example.com</pre></div>
@@ -1003,6 +1048,10 @@ PasswordAuthentication <span class="string">no</span></pre></div>
 
 <!-- ══════════ 2.6 SSL ══════════ -->
 <h2 id="s2-ssl"><span class="num">2.6</span>SSL Certificates <span class="badge path-a">Path A</span> <span class="badge required">Required</span></h2>
+<div class="card">
+  <p>🔒 <strong>SSL certificate = the padlock.</strong> It encrypts traffic between visitors and your site, and it's what makes URLs show <code>https://</code> instead of <code>http://</code>. Browsers now warn on any site without one.</p>
+  <p style="margin:0;">🆓 <strong>Let's Encrypt</strong> is a free certificate authority. You prove you own the domain, it hands you a cert, and it auto-renews every 90 days. Certbot is the tool that does all that talking for you.</p>
+</div>
 
 <h3>Option 1: Cloudflare handles SSL (easiest) <span class="badge recommended">Recommended</span></h3>
 <p>If DNS is Proxied: Cloudflare Dashboard → SSL/TLS → set mode to <strong>Full</strong>. Done. No terminal needed.</p>
@@ -1059,6 +1108,9 @@ PasswordAuthentication <span class="string">no</span></pre></div>
 }</pre></div>
 
 <h3>Node.js — reverse proxy</h3>
+<div class="card">
+  <p>🔁 <strong>What's a reverse proxy?</strong> Your Node app listens on an internal port (like 3000), which isn't reachable from the internet. NGINX sits in front on ports 80/443, takes the public request, and quietly forwards it to your app on port 3000. The visitor only ever talks to NGINX. Same trick powers CloudPanel and Coolify under the hood.</p>
+</div>
 <div class="code-wrap"><pre>server {
     listen 80;
     server_name app.example.com;
@@ -1174,13 +1226,241 @@ sha256sum -c && sudo <span class="string">CLOUD=hetzner</span> <span class="stri
 
 
 <!-- ═══════════════════════════════════ -->
+<!-- PART 2C — COOLIFY                 -->
+<!-- ═══════════════════════════════════ -->
+<div class="section-divider"></div>
+
+<h2 id="co-what"><span class="num">4.1</span>What is Coolify? <span class="badge path-c">Path C</span> <span class="badge required">Required — Read This</span></h2>
+<p><strong>Coolify</strong> is a free, open-source control panel that turns your Hetzner server into your own mini "Heroku" or "Vercel". Instead of uploading files over SFTP, you <strong>point Coolify at a Git repository</strong> (GitHub, GitLab, etc.) and it builds and deploys your app automatically — every time you push code.</p>
+<div class="card">
+  <p><strong>What Coolify can deploy for you:</strong></p>
+  <p>🧱 <strong>Apps from Git</strong> — Node.js, Next.js, Python, Laravel/PHP, Ruby, Go, static sites, anything with a Dockerfile.</p>
+  <p>🗄️ <strong>Databases</strong> — PostgreSQL, MySQL/MariaDB, MongoDB, Redis, KeyDB, Clickhouse, Dragonfly. One-click create, with automatic backups.</p>
+  <p>🧰 <strong>"One-click" services</strong> — WordPress, Ghost, n8n, Plausible Analytics, Umami, Uptime Kuma, Gitea, MinIO, and 100+ others from a template library.</p>
+  <p style="margin:0;">🐳 <strong>Any Docker container</strong> — if it has a Docker image, Coolify can run it.</p>
+</div>
+<div class="callout tip"><span class="icon">💡</span><div><strong>When to pick Coolify over CloudPanel:</strong> choose Coolify if you're a developer deploying your own apps, or you want one-click installs of modern tools (n8n, Plausible, Ghost). Choose CloudPanel if you mainly host classic WordPress/PHP sites for clients.</div></div>
+<div class="callout warn"><span class="icon">⚠️</span><div><strong>Server size:</strong> Coolify and its builds use more RAM than CloudPanel. Hetzner <strong>CX22 (4 GB RAM) is the practical minimum</strong>. CX32 (8 GB) is more comfortable if you plan to host several apps.</div></div>
+<p>Official docs: <a href="https://coolify.io/docs/get-started/introduction" target="_blank" rel="noopener">coolify.io/docs</a></p>
+
+<h3>Wait — what's Docker? What's a container?</h3>
+<p>Coolify runs everything using <strong>Docker</strong>, so it's worth understanding the basic idea (you don't need to <em>use</em> Docker directly — Coolify hides it).</p>
+<div class="card">
+  <p>📦 <strong>A container is like a sealed lunchbox for software.</strong> Inside the box is everything the app needs to run — the code, the right version of Node or PHP, system libraries, config — all packed together. The box runs the same way on any computer, because it brings its own environment with it. No more "but it worked on my laptop".</p>
+  <p>🏭 <strong>Docker</strong> is the tool that builds and runs these lunchboxes.</p>
+  <p>🧱 <strong>An image</strong> is the recipe / blueprint for a lunchbox. A <strong>container</strong> is a running copy of it. You can start, stop, and throw away containers freely — the image stays put, ready to make another one.</p>
+  <p>🏘️ On your Hetzner server, Coolify runs <strong>one container per app</strong> and <strong>one per database</strong>. Each one is isolated from the others — if one app crashes, the rest keep running. If you want to remove an app, Coolify deletes its container and it's gone cleanly, no leftover files scattered across the system (which is a common pain with manual LEMP setups).</p>
+  <p style="margin:0;">🌐 Coolify also runs a special container called <strong>Traefik</strong> (the "reverse proxy"). Traefik watches the traffic hitting your server on ports 80/443, and routes each incoming request to the correct app container based on the domain — that's how one server can host many sites on the same IP.</p>
+</div>
+<div class="callout tip"><span class="icon">💡</span><div><strong>You don't have to learn Docker commands.</strong> Everything in this guide happens in the Coolify browser UI. The words "container", "image", "volume" will appear in the interface — now you know what they mean.</div></div>
+
+<!-- ══════════ 4.2 INSTALL ══════════ -->
+<h2 id="co-install"><span class="num">4.2</span>Install Coolify <span class="badge path-c">Path C</span> <span class="badge required">Required</span></h2>
+<p>One-time terminal install. After this, <strong>everything is browser-based</strong>.</p>
+<div class="callout warn"><span class="icon">⚠️</span><div><strong>Requires a fresh server.</strong> If you followed Path A or Path B, create a new Hetzner server (Ubuntu 22.04 or 24.04) and complete Part 1 (server hardening) first.</div></div>
+
+<div class="step"><div class="step-num">1</div><div class="step-content"><p>SSH into your server (or use the Hetzner Web Console) as <code>root</code>.</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p>Make sure the system is up to date:</p>
+<div class="code-wrap"><pre><span class="cmd">apt update</span> && <span class="cmd">apt</span> <span class="flag">-y</span> upgrade && <span class="cmd">apt</span> <span class="flag">-y</span> install curl</pre></div></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-content"><p>Run the official Coolify installer:</p>
+<div class="code-wrap"><pre><span class="cmd">curl</span> <span class="flag">-fsSL</span> https://cdn.coollabs.io/coolify/install.sh | <span class="cmd">bash</span></pre></div>
+<p>This installs Docker, pulls the Coolify containers, and starts them. Expect 3–8 minutes of scrolling text — that's normal.</p></div></div>
+<div class="step"><div class="step-num">4</div><div class="step-content"><p>When it finishes, the script prints a URL like <code>http://YOUR_SERVER_IP:8000</code>. Keep that handy.</p></div></div>
+
+<h3>Wait — what's a port? What's a firewall?</h3>
+<div class="card">
+  <p>🚪 <strong>A port is like a numbered door on your server.</strong> Your server has one address (the IP), but thousands of numbered doors. Different services listen at different doors: web traffic uses door <strong>80</strong> (HTTP) and <strong>443</strong> (HTTPS), SSH uses door <strong>22</strong>, Coolify's dashboard uses door <strong>8000</strong>, and so on.</p>
+  <p>🛡️ <strong>A firewall (UFW)</strong> is a bouncer that decides which doors are open to the outside world. By default in Part 1 we told UFW to only open doors 22, 80, and 443 — everything else is blocked.</p>
+  <p style="margin:0;">✅ <strong>"Allow port X"</strong> = tell the bouncer to unlock door X. <strong>"Close port X"</strong> = lock it again. You do this with one command; nothing dangerous happens if you type it wrong — you can just rerun it.</p>
+</div>
+
+<div class="callout warn"><span class="icon">⚠️</span><div><strong>Open the doors Coolify needs.</strong> If you enabled UFW in section 1.6, run the command below. It unlocks port <code>8000</code> (the Coolify dashboard, so you can log into it) and ports <code>6001</code>/<code>6002</code> (used by Coolify to stream live build logs and the in-browser terminal):
+<div class="code-wrap"><pre><span class="cmd">sudo ufw allow</span> 8000/tcp && <span class="cmd">sudo ufw allow</span> 6001/tcp && <span class="cmd">sudo ufw allow</span> 6002/tcp</pre></div>
+<p style="margin:6px 0 0;">Later, after section 4.4 moves the dashboard onto a real HTTPS domain, you can re-lock port 8000 — we'll show you exactly how in section 4.13.</p></div></div>
+
+<div class="callout success"><span class="icon">🎉</span><div><strong>That's the last terminal command you need for Path C.</strong> Everything from here is in the browser.</div></div>
+
+<!-- ══════════ 4.3 FIRST LOGIN ══════════ -->
+<h2 id="co-access"><span class="num">4.3</span>Access Coolify & First Login <span class="badge path-c">Path C</span> <span class="badge required">Required</span></h2>
+<p>Open your browser: <code>http://YOUR_SERVER_IP:8000</code></p>
+<div class="step"><div class="step-num">1</div><div class="step-content"><p><span class="badge required">Required</span> You'll see a <strong>"Register"</strong> screen. Create your admin account (name, email, strong password).</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p><span class="badge required">Required</span> Log in.</p></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-content"><p><span class="badge recommended">Recommended</span> Top-right avatar → <strong>Profile</strong> → enable <strong>Two-Factor Authentication</strong>.</p></div></div>
+<div class="callout danger"><span class="icon">🚨</span><div><strong>Do this IMMEDIATELY.</strong> Port 8000 is public. The <em>first person</em> to open the URL becomes the admin — register your account the moment the installer finishes.</div></div>
+
+<!-- ══════════ 4.4 DNS ══════════ -->
+<h2 id="co-dns"><span class="num">4.4</span>Cloudflare DNS for Coolify <span class="badge path-c">Path C</span> <span class="badge required">Required</span></h2>
+<p>You want two kinds of DNS records: one for the Coolify dashboard itself, and one (per app) for each site you deploy.</p>
+
+<h3>Dashboard access <span class="badge recommended">Recommended</span></h3>
+<table class="dns-table">
+  <tr><th>Type</th><th>Name</th><th>Content</th><th>Proxy</th></tr>
+  <tr><td class="type">A</td><td class="name-col">coolify</td><td class="val">YOUR_SERVER_IP</td><td>DNS only (grey)</td></tr>
+</table>
+<p>Then in Coolify: <strong>Settings</strong> → <strong>Instance Settings</strong> → set <strong>Instance's Domain</strong> to <code>https://coolify.example.com</code>. Coolify will auto-issue a Let's Encrypt certificate and redirect port 8000 to HTTPS.</p>
+
+<h3>Your apps <span class="badge required">Required</span></h3>
+<p>For each app you plan to deploy, add a record like:</p>
+<table class="dns-table">
+  <tr><th>Type</th><th>Name</th><th>Content</th><th>Proxy</th></tr>
+  <tr><td class="type">A</td><td class="name-col">app</td><td class="val">YOUR_SERVER_IP</td><td>DNS only (grey) during SSL issue</td></tr>
+  <tr><td class="type">A</td><td class="name-col">@</td><td class="val">YOUR_SERVER_IP</td><td>DNS only (grey) during SSL issue</td></tr>
+</table>
+<div class="callout warn"><span class="icon">⚠️</span><div>Keep Cloudflare set to <strong>DNS only (grey cloud)</strong> while Coolify issues the Let's Encrypt certificate. Once it's issued, you can switch to Proxied (orange) and set Cloudflare SSL mode to <strong>Full (strict)</strong>.</div></div>
+
+<!-- ══════════ 4.5 SERVERS ══════════ -->
+<h2 id="co-server"><span class="num">4.5</span>Connect Your Server <span class="badge path-c">Path C</span> <span class="badge required">Required</span></h2>
+<p>Coolify is already managing the server it's installed on — it calls it <code>localhost</code>. You don't need to add it manually. Check it:</p>
+<div class="step"><div class="step-num">1</div><div class="step-content"><p>Left sidebar → <strong>Servers</strong> → you should see <code>localhost</code> with a green "Reachable" / "Usable" status.</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p><span class="badge optional">Optional</span> Later, to deploy to <em>another</em> Hetzner server, click <strong>+ Add</strong>, paste its IP, and give Coolify an SSH key it can use to connect.</p></div></div>
+
+<!-- ══════════ 4.6 PROJECTS ══════════ -->
+<h2 id="co-project"><span class="num">4.6</span>Projects & Environments <span class="badge path-c">Path C</span> <span class="badge recommended">Recommended</span></h2>
+<p>Coolify groups things in <strong>Projects</strong> (e.g. "My Blog", "Client ACME") and each project has <strong>Environments</strong> (<code>production</code>, <code>staging</code>, etc.). Apps, databases, and services live inside an environment.</p>
+<div class="step"><div class="step-num">1</div><div class="step-content"><p>Left sidebar → <strong>Projects</strong> → <strong>+ Add</strong> → name it (e.g. "My Blog") → Create.</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p>Open the project → you'll see a default <code>production</code> environment. Click into it.</p></div></div>
+
+<!-- ══════════ 4.7 DEPLOY APP ══════════ -->
+<h2 id="co-app"><span class="num">4.7</span>Deploy Your First App from Git <span class="badge path-c">Path C</span> <span class="badge required">Required</span></h2>
+<p>This is Coolify's superpower: deploying a site straight from a GitHub repo.</p>
+<div class="step"><div class="step-num">1</div><div class="step-content"><p>Inside your environment → <strong>+ New</strong> → <strong>Application</strong>.</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p>Choose a source:</p>
+<ul style="margin:6px 0 0 18px;">
+  <li><strong>Public Repository</strong> — simplest: paste any public GitHub/GitLab URL.</li>
+  <li><strong>GitHub App</strong> — for private repos and auto-deploy on push. Click <strong>Add GitHub App</strong> and follow the OAuth flow.</li>
+</ul></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-content"><p>Coolify detects the stack (Next.js, Node, static, Laravel, Dockerfile, etc.). Pick the right <strong>Build Pack</strong>:</p>
+<ul style="margin:6px 0 0 18px;">
+  <li><strong>Nixpacks</strong> (default) — zero-config; works for most Node/Python/PHP/Go projects.</li>
+  <li><strong>Static</strong> — for plain HTML / built front-ends.</li>
+  <li><strong>Dockerfile</strong> — if your repo has one, this is the most predictable option.</li>
+</ul></div></div>
+<div class="step"><div class="step-num">4</div><div class="step-content"><p>Set the <strong>Domain</strong> field to something like <code>https://app.example.com</code> (matching the DNS record from 4.4). Coolify handles SSL automatically.</p></div></div>
+<div class="step"><div class="step-num">5</div><div class="step-content"><p><span class="badge optional">Optional</span> Open the <strong>Environment Variables</strong> tab and add any secrets your app needs (<code>DATABASE_URL</code>, <code>API_KEY</code>, etc.).</p></div></div>
+<div class="step"><div class="step-num">6</div><div class="step-content"><p>Click <strong>Deploy</strong>. Watch the build log in real time. First build can take 2–10 minutes; subsequent deploys are much faster thanks to caching.</p></div></div>
+<div class="callout tip"><span class="icon">💡</span><div><strong>Auto-deploy on push:</strong> if you connected via the GitHub App, every <code>git push</code> to the chosen branch redeploys automatically. No SFTP, no SSH.</div></div>
+
+<!-- ══════════ 4.8 ONE-CLICK ══════════ -->
+<h2 id="co-oneclick"><span class="num">4.8</span>One-Click Apps (WordPress, Ghost, n8n…) <span class="badge path-c">Path C</span> <span class="badge optional">Optional</span></h2>
+<p>You don't need a Git repo for popular tools — Coolify ships templates.</p>
+<div class="step"><div class="step-num">1</div><div class="step-content"><p>Inside your environment → <strong>+ New</strong> → <strong>Service</strong>.</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p>Browse or search the template list: <strong>WordPress</strong>, <strong>Ghost</strong>, <strong>n8n</strong>, <strong>Plausible</strong>, <strong>Umami</strong>, <strong>Uptime Kuma</strong>, <strong>Gitea</strong>, <strong>MinIO</strong>, <strong>Directus</strong>, etc.</p></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-content"><p>Pick a template → set the domain (e.g. <code>https://blog.example.com</code>) → <strong>Deploy</strong>. The associated database is created and wired up automatically.</p></div></div>
+
+<!-- ══════════ 4.9 DATABASES ══════════ -->
+<h2 id="co-db"><span class="num">4.9</span>Databases <span class="badge path-c">Path C</span> <span class="badge optional">Optional</span></h2>
+<p>If your custom app needs its own database:</p>
+<div class="step"><div class="step-num">1</div><div class="step-content"><p>Environment → <strong>+ New</strong> → <strong>Database</strong> → choose <strong>PostgreSQL</strong> / <strong>MySQL</strong> / <strong>MariaDB</strong> / <strong>MongoDB</strong> / <strong>Redis</strong> → <strong>Create</strong>.</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p>Coolify generates credentials and an <strong>internal URL</strong> (something like <code>postgres://user:pass@postgres-xyz:5432/app</code>).</p></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-content"><p>Copy that URL into your app's environment variables (e.g. <code>DATABASE_URL</code>) — your app and database are now on the same internal Docker network, no public port needed.</p></div></div>
+<div class="callout warn"><span class="icon">⚠️</span><div>Only expose a database to the public internet if you absolutely need to (e.g. remote admin tool). Prefer the internal URL.</div></div>
+
+<!-- ══════════ 4.10 SSL ══════════ -->
+<h2 id="co-ssl"><span class="num">4.10</span>SSL Certificates <span class="badge path-c">Path C</span> <span class="badge required">Required</span></h2>
+<p>Coolify ships with a <strong>Traefik</strong> reverse proxy that issues and renews Let's Encrypt certificates automatically — you just need to:</p>
+<ol style="margin:6px 0 12px 20px;">
+  <li>Use <code>https://</code> in the app's <strong>Domain</strong> field.</li>
+  <li>Point the domain's A record at your server IP.</li>
+  <li>Keep the DNS record <strong>unproxied (grey cloud)</strong> in Cloudflare while Coolify issues the cert. Switch to Proxied afterwards if you want.</li>
+</ol>
+<p>If a cert fails to issue, open the app → <strong>Logs</strong> tab → <strong>Proxy</strong> to see Traefik's reason (usually DNS not yet propagated, or Cloudflare proxy enabled too early).</p>
+
+<!-- ══════════ 4.11 BACKUPS ══════════ -->
+<h2 id="co-backups"><span class="num">4.11</span>Backups <span class="badge path-c">Path C</span> <span class="badge recommended">Recommended</span></h2>
+<h3>Whole-server backups <span class="badge recommended">Recommended</span></h3>
+<p>Same advice as the other paths: enable <strong>Hetzner Cloud Backups</strong> on the server (Console → server → Backups → Enable). ~20% of the server price, daily full snapshots — the simplest safety net.</p>
+
+<h3>Coolify database backups <span class="badge recommended">Recommended</span></h3>
+<div class="step"><div class="step-num">1</div><div class="step-content"><p>Open any database in Coolify → <strong>Backups</strong> tab.</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p>Turn on <strong>Scheduled Backups</strong> and set a cron (e.g. <code>0 3 * * *</code> = every day at 3 AM).</p></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-content"><p><span class="badge recommended">Recommended</span> Add an <strong>S3-compatible storage</strong> destination (Hetzner Object Storage, Cloudflare R2, Backblaze B2) in <strong>Settings → S3 Storages</strong>, then select it in the backup config. Off-server copies survive server loss.</p></div></div>
+
+<h3>Git = backup for app code <span class="badge tip">Tip</span></h3>
+<p>Because apps deploy from Git, your <strong>source code is already backed up</strong> in GitHub/GitLab. You only need to worry about backing up databases and uploaded user files (volumes).</p>
+
+<!-- ══════════ 4.12 FILE MANAGEMENT ══════════ -->
+<h2 id="co-files"><span class="num">4.12</span>File Management in Coolify <span class="badge path-c">Path C</span> <span class="badge recommended">Recommended — Read This</span></h2>
+<p>This part confuses everyone coming from traditional hosting, so read slowly.</p>
+
+<div class="card">
+  <p>🚫 <strong>There is no <code>/var/www/html</code> to SFTP into.</strong> With CloudPanel or a manual LEMP stack, you upload files into a folder on the server. With Coolify, <strong>the files live inside the container</strong> (the sealed lunchbox), not in a normal server folder you can browse. That's by design — it's what makes deploys repeatable.</p>
+  <p style="margin:0;">So "editing files on the server" is replaced by three patterns, depending on what you're trying to do.</p>
+</div>
+
+<h3>Pattern 1 — App code (HTML, PHP, JS, theme files…)</h3>
+<p><strong>Don't edit it on the server.</strong> Edit it on your computer, <code>git push</code>, and Coolify rebuilds automatically. If you connected the GitHub App (4.7), the site updates within a minute of your push. This is the whole point of Coolify.</p>
+<div class="callout warn"><span class="icon">⚠️</span><div>If you ever edit files <em>inside</em> a running container by hand, the next deploy <strong>wipes your changes</strong> — the container is rebuilt fresh from the image. Always change code in Git.</div></div>
+
+<h3>Pattern 2 — User uploads & persistent data (WordPress uploads, database files, avatars…)</h3>
+<p>These live in <strong>Docker volumes</strong>. A volume is a folder on the <em>real</em> server that Coolify mounts into the container — so the data survives when the container is rebuilt.</p>
+<p>Each app in Coolify has a <strong>Storage</strong> tab where you can see and add volume mounts. For WordPress, for example, there's a volume mounted at <code>/var/www/html/wp-content/uploads</code> so media uploads persist across deploys.</p>
+<div class="callout tip"><span class="icon">💡</span><div><strong>Rule of thumb:</strong> if it's code → it goes in Git. If it's user-generated (uploads, database rows, logs) → it goes in a volume.</div></div>
+
+<h3>Pattern 3 — "I just need to look at / upload one file"</h3>
+<p>Two easy options from the Coolify UI:</p>
+<div class="step"><div class="step-num">1</div><div class="step-content"><p><strong>Terminal tab</strong> — open your app → <strong>Terminal</strong> tab → a shell inside the container opens in your browser. <code>ls</code>, <code>cat</code>, <code>nano</code> work just like normal.</p></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-content"><p><strong>SFTP directly to the host server</strong> — connect to the Hetzner server with FileZilla (see the Uploading Files section) as your <code>deploy</code> user. Volume data lives under <code>/var/lib/docker/volumes/</code> (requires root to read). Prefer Pattern 1 whenever possible.</p></div></div>
+
+<h3>Where does each thing actually live?</h3>
+<div class="card">
+  <p><strong>Your source code</strong> — GitHub / GitLab (and cached inside the container image).</p>
+  <p><strong>Build outputs (node_modules, compiled files)</strong> — inside the container; disposable, rebuilt every deploy.</p>
+  <p><strong>Uploaded files / databases</strong> — Docker volumes on the host at <code>/var/lib/docker/volumes/</code>.</p>
+  <p><strong>App logs</strong> — in Coolify's UI: app → <strong>Logs</strong> tab. No need to SSH.</p>
+  <p style="margin:0;"><strong>Coolify's own config</strong> — <code>/data/coolify/</code> on the server.</p>
+</div>
+
+<!-- ══════════ 4.13 SECURITY ══════════ -->
+<h2 id="co-security"><span class="num">4.13</span>Security in Coolify <span class="badge path-c">Path C</span> <span class="badge required">Required — Read This</span></h2>
+<p>Containers help a lot (each app is isolated), but they don't replace basic server hygiene. Here's the beginner-friendly checklist.</p>
+
+<h3>Things you already did in Part 1 still apply</h3>
+<p>UFW firewall, Fail2Ban, automatic updates, SSH key login, disabled root password login — <strong>all of that protects Coolify too</strong>. Don't skip Part 1 just because you're using a control panel.</p>
+
+<h3>Coolify-specific checklist</h3>
+<div class="check-list">
+  <div class="check-item"><input type="checkbox" id="cosec1"><label for="cosec1">Admin account registered <em>immediately</em> after install (first visitor becomes admin!)</label><span class="badge required check-badge">Required</span></div>
+  <div class="check-item"><input type="checkbox" id="cosec2"><label for="cosec2">Strong, unique password for the Coolify admin account</label><span class="badge required check-badge">Required</span></div>
+  <div class="check-item"><input type="checkbox" id="cosec3"><label for="cosec3">Two-Factor Authentication enabled (Profile → 2FA)</label><span class="badge recommended check-badge">Recommended</span></div>
+  <div class="check-item"><input type="checkbox" id="cosec4"><label for="cosec4">Coolify dashboard moved off <code>http://IP:8000</code> onto <code>https://coolify.example.com</code> (section 4.4)</label><span class="badge recommended check-badge">Recommended</span></div>
+  <div class="check-item"><input type="checkbox" id="cosec5"><label for="cosec5">After the dashboard works on your HTTPS domain, <strong>re-lock door 8000</strong> (it's no longer needed — visitors use the domain now). See command below.</label><span class="badge recommended check-badge">Recommended</span></div>
+  <div class="check-item"><input type="checkbox" id="cosec6"><label for="cosec6">Firewall only has these doors open: <strong>22</strong> (SSH login), <strong>80</strong> (HTTP), <strong>443</strong> (HTTPS), <strong>6001 &amp; 6002</strong> (Coolify live logs/terminal)</label><span class="badge recommended check-badge">Recommended</span></div>
+</div>
+
+<h3>How to re-lock port 8000 (once the HTTPS domain works)</h3>
+<p>After you've finished section 4.4 and can reach Coolify at <code>https://coolify.example.com</code>, you don't need the raw <code>http://IP:8000</code> entrance anymore. Lock that door back up:</p>
+<div class="code-wrap"><pre><span class="comment"># Lock door 8000 again</span>
+<span class="cmd">sudo ufw delete allow</span> 8000/tcp
+
+<span class="comment"># Check which doors are currently open</span>
+<span class="cmd">sudo ufw status</span></pre></div>
+<p>The second command prints a little table showing every open port. If you ever need to reopen it temporarily (e.g. your HTTPS domain is broken and you need to get back in), just run <code>sudo ufw allow 8000/tcp</code> again — it's fully reversible.</p>
+
+<h3>Rest of the checklist</h3>
+<div class="check-list">
+  <div class="check-item"><input type="checkbox" id="cosec7"><label for="cosec7">Databases use <strong>internal URLs only</strong> — "Public Port" toggle is OFF unless you truly need remote access</label><span class="badge required check-badge">Required</span></div>
+  <div class="check-item"><input type="checkbox" id="cosec8"><label for="cosec8">Secrets (API keys, DB passwords) kept in Coolify <strong>Environment Variables</strong> — never committed to Git</label><span class="badge required check-badge">Required</span></div>
+  <div class="check-item"><input type="checkbox" id="cosec9"><label for="cosec9">Coolify updated regularly: Settings → <strong>Check for updates</strong> → Update</label><span class="badge recommended check-badge">Recommended</span></div>
+  <div class="check-item"><input type="checkbox" id="cosec10"><label for="cosec10">Hetzner Cloud Backups enabled on the server</label><span class="badge recommended check-badge">Recommended</span></div>
+</div>
+
+<h3>A few gotchas worth knowing</h3>
+<div class="card">
+  <p>🐳 <strong>Docker can unlock doors behind the firewall's back.</strong> If you flip the "Public Port" switch on a database or app in Coolify, Docker opens that door directly — UFW won't stop it, even if you think the door is locked. So treat "Public Port" as a loaded gun: leave it OFF unless you genuinely need to connect from outside the server, and always set a strong password if you turn it on.</p>
+  <p>🔑 <strong>GitHub App permissions.</strong> When connecting via the GitHub App, only grant access to the repos Coolify needs to deploy — not all your repos.</p>
+  <p>📜 <strong>Don't run random templates blindly.</strong> Coolify's one-click services are convenient, but each one is a third-party app with its own security track record. Stick to well-known ones (WordPress, Ghost, n8n, Plausible) and keep them updated.</p>
+  <p style="margin:0;">🧹 <strong>Old containers/images accumulate</strong> and eat disk. Occasionally run <code>docker system prune -a</code> on the server (or let Coolify do it via Settings → <strong>Advanced</strong> → <strong>Cleanup</strong>).</p>
+</div>
+
+
+<!-- ═══════════════════════════════════ -->
 <!-- DAY-TO-DAY SECTIONS               -->
 <!-- ═══════════════════════════════════ -->
 <div class="section-divider"></div>
 
 <h2 id="sftp">Uploading Files to Your Server (SFTP) <span class="badge recommended">Recommended — Know This</span></h2>
 
-<p>SFTP (Secure File Transfer Protocol) is how you upload files to your server — themes, plugins, scripts, images, custom code. It works like drag-and-drop in a visual app. The most popular free SFTP client is <strong>FileZilla</strong>.</p>
+<p>SFTP (Secure File Transfer Protocol) is how you upload files to your server — themes, plugins, scripts, images, custom code. Think of it as "Google Drive for your server": a drag-and-drop window showing your computer on one side and the server on the other, with the same secure SSH connection underneath. The most popular free SFTP client is <strong>FileZilla</strong>.</p>
 
 <h3>Install FileZilla</h3>
 <p>Download from <a href="https://filezilla-project.org/" target="_blank">filezilla-project.org</a> (free, works on Mac/Windows/Linux). Install it like any other app.</p>
@@ -1217,6 +1497,11 @@ sha256sum -c && sudo <span class="string">CLOUD=hetzner</span> <span class="stri
 <h2 id="cron-jobs">Scheduled Tasks / Cron Jobs <span class="badge optional">Optional — When Needed</span></h2>
 
 <p>Cron jobs let you run tasks automatically on a schedule — daily data refreshes, weekly reports, hourly API calls, database cleanups, or anything else you can express as a command.</p>
+
+<div class="card">
+  <p>⏰ <strong>What's cron?</strong> Cron is a built-in Linux scheduler — like a recurring alarm clock that runs commands for you. Each scheduled task is called a <em>cron job</em>.</p>
+  <p style="margin:0;">🗓️ <strong>The five stars.</strong> A cron schedule is five fields: <code>minute hour day month weekday</code>. A <code>*</code> means "every". So <code>0 6 * * *</code> = minute 0 of hour 6, every day — i.e. 6:00 AM daily. Stuck? Paste your schedule into <a href="https://crontab.guru" target="_blank">crontab.guru</a> for a plain-English translation.</p>
+</div>
 
 <h3>WordPress scheduled tasks</h3>
 <p>WordPress has its own built-in scheduling system (WP-Cron). For most WordPress tasks, you don't need server-level cron at all:</p>
@@ -1383,8 +1668,6 @@ sha256sum -c && sudo <span class="string">CLOUD=hetzner</span> <span class="stri
   <div class="check-item"><input type="checkbox" id="t8"><label for="t8"><code>www</code> and non-<code>www</code> both work (one should redirect to the other)</label></div>
   <div class="check-item"><input type="checkbox" id="t9"><label for="t9">Subdomains load (if configured)</label></div>
 </div>
-
-<div class="callout tip"><span class="icon">💡</span><div><strong>DNS not working yet?</strong> New DNS records can take up to 24–48 hours to propagate worldwide, though Cloudflare is usually under 5 minutes. Be patient. Use <a href="https://dnschecker.org" target="_blank">dnschecker.org</a> to check propagation status.</div></div>
 
 
 <!-- ══════════ COMMON MISTAKES ══════════ -->
